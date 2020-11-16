@@ -1,0 +1,5 @@
+pkg:
+  - name: curl
+  - name: kubectl
+    depends_on:
+      - curl
