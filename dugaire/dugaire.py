@@ -25,6 +25,17 @@ import fire
 
 class Cli(object):
 
+  install_list = []
+
+  def install_order(self, pkg):
+    if "depends_on" in pkg:
+      for pkg in pkg["depends_on"]:
+        self.install_order(pkg)
+    
+    self.install_list.append(pkg)
+    
+
+
   def build(self):
     
     with open(f'{_THIS_SCRIPT_PATH}/pkg/config.yaml') as file:
@@ -32,7 +43,9 @@ class Cli(object):
       #print(pkg_config)
 
     for pkg in pkg_config["pkg"]:
-      print(pkg)
+      self.install_order(pkg)
+
+    print(self.install_list)
 
     #outputText = kubectl.install()
     #print(outputText)
