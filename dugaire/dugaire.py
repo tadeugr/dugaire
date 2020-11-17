@@ -5,7 +5,9 @@ import docker
 import click
 import jinja2
 import yaml
+import urllib.request
 from io import BytesIO
+
 
 _THIS_SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(1, f"{_THIS_SCRIPT_PATH}/pkg")
@@ -27,16 +29,30 @@ sys.path.insert(1, f"{_THIS_SCRIPT_PATH}/pkg")
 
 class Dugaire():
 
-  def install_curl(self):
+  def install_curl(self, version = None):
     dockerfile = ''
     dockerfile += 'RUN apt-get install -qqy --no-install-recommends curl ca-certificates'
     dockerfile += "\n"
     return dockerfile
 
-  def install_kubectl(self):
+  def install_kubectl(self, version = 'latest'):
+
+    download_url = 'https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
+    if version != 'latest':
+      download_url = f'https://storage.googleapis.com/kubernetes-release/release/v{version}/bin/linux/amd64/kubectl'
+
+    try:
+      if urllib.request.urlopen(download_url).getcode() != 200:
+        raise Exception("URL error")
+        
+    except:
+        print(f'Could not open URL {download_url}')
+        sys.exit()
+
+
     dockerfile = ''
     dockerfile = self.install_curl()
-    dockerfile += 'RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
+    dockerfile += f'RUN curl -LO {download_url}'
     dockerfile += "\n"
     dockerfile += 'RUN chmod +x ./kubectl'
     dockerfile += "\n"
@@ -54,13 +70,27 @@ class Dugaire():
     dockerfile += "\n"
 
     for pkg in install:
-      #click.echo(pkg)
-      dynamic_install = getattr(self, 'install_'+pkg)
-      dockerfile += dynamic_install()
+
+      pkg_info = pkg.split(':')
+      if len(pkg_info) > 2:
+        print(f'{pkg} invalid format.')
+        sys.exit()
+
+      pkg_name = pkg_info[0]
+      pkg_version = None
+      if len(pkg_info) == 2:
+        pkg_version = pkg_info[1]
+
+      if not hasattr(self, 'install_'+pkg_name):
+        print(f'{pkg} not supported.')
+        sys.exit()
+
+      dynamic_install = getattr(self, 'install_'+pkg_name)
+      dockerfile += dynamic_install(pkg_version)
 
     print(dockerfile)
 
-    return True
+    #return True
 
     f = BytesIO(dockerfile.encode('utf-8'))
     client = docker.from_env()
@@ -73,6 +103,14 @@ class Dugaire():
     )
     print(image)
     print(_)
+    object_methods = [method_name for method_name in dir(image)
+                  if callable(getattr(image, method_name))]
+    #print(object_methods)
+    #print(image.__dict__)
+
+    print(image.attrs["Id"])
+    print(image.attrs["RepoTags"])
+    
 
 @click.group()
 def cli():
@@ -83,7 +121,7 @@ def cli():
 @click.option('--install', '-i', multiple=True)
 @click.option('--output', '-o', required=False)
 def build(from_, install, output):
-  click.echo(install)
+  #click.echo(install)
   dugaire = Dugaire()
   dugaire.build(install)
  
