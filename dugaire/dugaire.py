@@ -1,7 +1,8 @@
 import os
 import sys
 import docker
-import fire
+#import fire
+import click
 import jinja2
 import yaml
 from io import BytesIO
@@ -9,7 +10,7 @@ from io import BytesIO
 _THIS_SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(1, f"{_THIS_SCRIPT_PATH}/pkg")
 
-from kubectl import kubectl
+#from kubectl import kubectl
 
 #client = docker.from_env()
 #client.containers.run("ubuntu:18.04", "echo hello world")
@@ -22,9 +23,9 @@ from kubectl import kubectl
 # print(image)
 # print(_)
 
-import fire
 
-class Cli(object):
+
+class Dugaire():
 
   def install_curl(self):
     dockerfile = ''
@@ -55,6 +56,8 @@ class Cli(object):
 
     print(dockerfile)
 
+    return True
+
     f = BytesIO(dockerfile.encode('utf-8'))
     client = docker.from_env()
     image, _ = client.images.build(
@@ -67,7 +70,21 @@ class Cli(object):
     print(image)
     print(_)
 
+@click.group()
+def cli():
+  pass
+
+@cli.command()
+@click.option('--from', '-f', 'from_', required=False)
+@click.option('--install', '-i', multiple=True, type=click.Choice(['kubectl', 'curl']))
+def build(from_, install):
+  click.echo(install)
+  dugaire = Dugaire()
+  dugaire.build()
  
+def main():
+  cli()
 
 if __name__ == '__main__':
-  fire.Fire(Cli)
+  #fire.Fire(Cli)
+  main()
