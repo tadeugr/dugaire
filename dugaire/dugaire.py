@@ -35,19 +35,19 @@ class Dugaire():
     dockerfile += "\n"
     return dockerfile
 
-  def install_kubectl(self, version = 'latest'):
+  def install_kubectl(self, version = None):
 
     download_url = 'https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
-    if version != 'latest':
+    if version and version != 'latest':
       download_url = f'https://storage.googleapis.com/kubernetes-release/release/v{version}/bin/linux/amd64/kubectl'
 
-    try:
-      if urllib.request.urlopen(download_url).getcode() != 200:
-        raise Exception("URL error")
-        
-    except:
-        print(f'Could not open URL {download_url}')
-        sys.exit()
+      try:
+        if urllib.request.urlopen(download_url).getcode() != 200:
+          raise Exception("URL error")
+          
+      except:
+          print(f'Could not open URL {download_url}')
+          sys.exit()
 
 
     dockerfile = ''
