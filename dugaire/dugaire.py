@@ -44,7 +44,7 @@ class Dugaire():
     dockerfile += "\n"
     return dockerfile
 
-  def build(self):
+  def build(self, install):
     dockerfile = ''
     dockerfile += 'FROM ubuntu:18.04'
     dockerfile += "\n"
@@ -52,7 +52,11 @@ class Dugaire():
     dockerfile += "\n"
     dockerfile += 'RUN apt-get update -qq'
     dockerfile += "\n"
-    dockerfile += self.install_kubectl()
+
+    for pkg in install:
+      #click.echo(pkg)
+      dynamic_install = getattr(self, 'install_'+pkg)
+      dockerfile += dynamic_install()
 
     print(dockerfile)
 
@@ -76,15 +80,15 @@ def cli():
 
 @cli.command()
 @click.option('--from', '-f', 'from_', required=False)
-@click.option('--install', '-i', multiple=True, type=click.Choice(['kubectl', 'curl']))
-def build(from_, install):
+@click.option('--install', '-i', multiple=True)
+@click.option('--output', '-o', required=False)
+def build(from_, install, output):
   click.echo(install)
   dugaire = Dugaire()
-  dugaire.build()
+  dugaire.build(install)
  
 def main():
   cli()
 
 if __name__ == '__main__':
-  #fire.Fire(Cli)
   main()
