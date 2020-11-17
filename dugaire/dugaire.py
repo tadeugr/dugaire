@@ -4,6 +4,7 @@ import docker
 import fire
 import jinja2
 import yaml
+from io import BytesIO
 
 _THIS_SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(1, f"{_THIS_SCRIPT_PATH}/pkg")
@@ -25,30 +26,48 @@ import fire
 
 class Cli(object):
 
-  install_list = []
+  def install_curl(self):
+    dockerfile = ''
+    dockerfile += 'RUN apt-get install -qqy --no-install-recommends curl ca-certificates'
+    dockerfile += "\n"
+    return dockerfile
 
-  def install_order(self, pkg):
-    if "depends_on" in pkg:
-      for pkg in pkg["depends_on"]:
-        self.install_order(pkg)
-    
-    self.install_list.append(pkg)
-    
-
+  def install_kubectl(self):
+    dockerfile = ''
+    dockerfile = self.install_curl()
+    dockerfile += 'RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
+    dockerfile += "\n"
+    dockerfile += 'RUN chmod +x ./kubectl'
+    dockerfile += "\n"
+    dockerfile += 'RUN mv ./kubectl /usr/local/bin'
+    dockerfile += "\n"
+    return dockerfile
 
   def build(self):
-    
-    with open(f'{_THIS_SCRIPT_PATH}/pkg/config.yaml') as file:
-      pkg_config = yaml.load(file, Loader=yaml.FullLoader)
-      #print(pkg_config)
+    dockerfile = ''
+    dockerfile += 'FROM ubuntu:18.04'
+    dockerfile += "\n"
+    dockerfile += 'LABEL builtwith="dugaire"'
+    dockerfile += "\n"
+    dockerfile += 'RUN apt-get update -qq'
+    dockerfile += "\n"
+    dockerfile += self.install_kubectl()
 
-    for pkg in pkg_config["pkg"]:
-      self.install_order(pkg)
+    print(dockerfile)
 
-    print(self.install_list)
+    f = BytesIO(dockerfile.encode('utf-8'))
+    client = docker.from_env()
+    image, _ = client.images.build(
+        fileobj=f,
+        #path='.',
+        #dockerfile='Dockerfile',
+        tag='customimage',
+        #buildargs='version=1.13.0'
+    )
+    print(image)
+    print(_)
 
-    #outputText = kubectl.install()
-    #print(outputText)
+ 
 
 if __name__ == '__main__':
   fire.Fire(Cli)

@@ -1,5 +1,7 @@
 pkg:
   - name: curl
+    depends_on:
+      - "{{a}}"
   - name: kubectl
     depends_on:
       - curl
