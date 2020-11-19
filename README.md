@@ -1,4 +1,5 @@
 ![A cute kitten](doc/dugaire-logo.png)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire?ref=badge_shield)
 
 
 # Build Docker images with custom packages
@@ -159,3 +160,6 @@ export LC_CTYPE="en_US.UTF-8"
 ```
 
 Then you should be able to run `dugaire`.
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire?ref=badge_large)
