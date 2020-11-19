@@ -112,7 +112,11 @@ Options:
 
 ## Base images
 
-* `ubuntu:18.04`
+| Distro        | Tested with                                  |
+| ------------- |:--------------------------------------------:|
+| ubuntu        | `ubuntu:16.04` `ubuntu:18.04` `ubuntu:20.04` |
+
+*You may use base images that were built from the tested images.*
 
 ## Package/Dependency managers
 
