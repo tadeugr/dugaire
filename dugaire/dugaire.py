@@ -60,6 +60,20 @@ def build(apt_install, pip3_install, with_kubectl, name, dry_run, output):
   Build Docker images with custom packages.
   \n
   Examples:
+  \n
+  Build an image and install vim using apt-get.
+  \n
+  $ dugaire build -apt=vim,curl
+  \n
+  Build an image and install vim using apt-get.
+  \n
+  $ dugaire build -apt=python3-pip -pip3=ansible
+  \n
+  Build an image and install the latest version of kubectl.
+  \n
+  $ dugaire build --with-kubectl=latest
+  \n
+
   """
 
   dockerfile = ''
@@ -80,7 +94,7 @@ def build(apt_install, pip3_install, with_kubectl, name, dry_run, output):
   if with_kubectl:
     url = 'https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
     if with_kubectl != 'latest':
-      url = f'https://storage.googleapis.com/kubernetes-release/release/v{version}/bin/linux/amd64/kubectl'
+      url = f'https://storage.googleapis.com/kubernetes-release/release/v{with_kubectl}/bin/linux/amd64/kubectl'
 
     template = get_template('with_kubectl.j2')
     dockerfile += template.render(url=url)
