@@ -1,5 +1,5 @@
 requirements:
-	pip install -r dugaire/requirements.txt
+	pip install -r requirements.txt
 
 install:
 	make requirements
@@ -8,3 +8,6 @@ install:
 install-dev:
 	make requirements
 	pip3 install --editable . --force
+
+build:
+	pyinstaller --onefile --name=dugaire dugaire.py
