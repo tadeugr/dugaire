@@ -3,11 +3,14 @@ requirements:
 
 install:
 	make requirements
-	pip3 install . --force
+	pip install . --force
 
 install-dev:
 	make requirements
-	pip3 install --editable . --force
+	pip install --editable . --force
 
 build:
 	pyinstaller --onefile --name=dugaire dugaire.py
+
+pkg:
+	python setup.py sdist bdist_wheel

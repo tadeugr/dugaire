@@ -1,13 +1,17 @@
 import os
-from setuptools import setup
+from setuptools import find_packages, setup
 
-_THIS_SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
+# The directory containing this file
+HERE = os.path.dirname(os.path.realpath(__file__))
+
+# REAME content
+README = open(os.path.join(HERE, "README.md")).read()
 
 setup(
-    name="tadeugr-dugaire",
+    name="dugaire",
     version="0.0.1",
-    description="Quickly build docker images with custom packages",
-    long_description=open(os.path.join(_THIS_SCRIPT_PATH, "README.md")).read(),
+    description="Build Docker images with custom packages for local development, testing and daily tasks.",
+    long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/tadeugr/dugaire",
     author="Tadeu Granemann",
@@ -18,8 +22,8 @@ setup(
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
     ],
-    #packages=["dugaire"],
+    packages=find_packages(exclude=("tests",)),
     include_package_data=True,
     install_requires=["click", "docker", "jinja2"],
-    entry_points={"console_scripts": ["dugaire=dugaire:main"]},
+    entry_points={"console_scripts": ["dugaire=dugaire.dugaire:main"]},
 )
