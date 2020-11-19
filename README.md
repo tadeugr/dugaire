@@ -18,12 +18,6 @@ Build an image and run a container with `vim`, `kubectl v1.15.0`.
 docker run -it --rm $(dugaire build -apt=vim --with-kubectl=1.15.0)
 ```
 
-# Usage
-
-```
-dugaire --help
-```
-
 # Install (on Linux)
 
 Clone this repository.
