@@ -41,7 +41,45 @@ make install
 You should have the command available.
 
 ```
-dugaire --help
+dugaire build --help
+```
+
+# Usage
+
+```
+Usage: dugaire build [OPTIONS]
+
+  Build Docker images with custom packages.
+
+  Examples:
+
+  Build an image and install vim using apt-get.
+
+  $ dugaire build -apt=vim,curl
+
+  Build an image and install vim using apt-get.
+
+  $ dugaire build -apt=python3-pip -pip3=ansible
+
+  Build an image and install the latest version of kubectl.
+
+  $ dugaire build --with-kubectl=latest
+
+Options:
+  -apt, --apt-install TEXT        Comma separeted list of packages (no blank
+                                  space). Example: -apt=curl,vim
+
+  -pip3, --pip3-install TEXT      Comma separeted list of packages (no blank
+                                  space). Example: -pip3=ansible,jinja2
+
+  --with-kubectl TEXT             Install kubectl version. Examples: --with-
+                                  kubectl=latest / --with-kubectl=1.17.0
+
+  -n, --name TEXT                 Image name.  [default: random]
+  --dry-run                       Do not build image.  [default: False]
+  -o, --output [image-id|image-name|dockerfile]
+                                  Command output options.  [default: image-id]
+  --help                          Show this message and exit.
 ```
 
 # Supported features
@@ -58,7 +96,7 @@ dugaire --help
 
 ## Packages
 
-* kubectl
+* `kubectl`
 
 # Useful commands
 
