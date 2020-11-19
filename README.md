@@ -20,6 +20,14 @@ docker run -it --rm $(dugaire build -apt=vim --with-kubectl=1.15.0)
 
 # Install (on Linux)
 
+## Using pip (recommended)
+
+```
+pip install dugaire
+```
+
+## From source
+
 Clone this repository.
 
 ```
@@ -32,7 +40,7 @@ git clone https://github.com/tadeugr/dugaire.git
 cd dugaire
 ```
 
-Install it (`pip3` is a requirement).
+Install it (requires `pip`).
 
 ```
 make install
