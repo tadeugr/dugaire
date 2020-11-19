@@ -9,8 +9,8 @@ install-dev:
 	make requirements
 	pip install --editable . --force
 
-build:
-	pyinstaller --onefile --name=dugaire dugaire.py
+test:
+	pytest
 
-pkg:
+setup:
 	python setup.py sdist bdist_wheel

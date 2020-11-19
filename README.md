@@ -18,6 +18,12 @@ Install `kubectl` binary version `v1.15.0` (use `--with-kubectl=latest` to insta
 docker run -it --rm $(dugaire build -apt=vim --with-kubectl=1.15.0)
 ```
 
+Do not build the image and just print the Dockerfile:
+
+```
+dugaire build -apt=vim,curl --with-kubectl=latest --output=dockerfile --dry-run
+```
+
 # Install (on Linux)
 
 ## Using pip (recommended)
@@ -74,19 +80,24 @@ Usage: dugaire build [OPTIONS]
   $ dugaire build --with-kubectl=latest
 
 Options:
-  -apt, --apt-install TEXT        Comma separeted list of packages (no blank
-                                  space) to install using apt-get install.
+  -apt, --apt-install <pkg01|pkg01,pkg02>
+                                  Comma separeted list of packages (no blank
+                                  space) to install using apt-get install..
                                   Example: -apt=curl,vim
 
-  -pip3, --pip3-install TEXT      Comma separeted list of packages (no blank
+  -pip3, --pip3-install <pkg01|pkg01,pkg02>
+                                  Comma separeted list of packages (no blank
                                   space) to install using pip3 install.
                                   WARNING: requires -apt=python3-pip. Example:
                                   -apt=python3-pip -pip3=ansible,jinja2
 
-  --with-kubectl TEXT             Install kubectl version. Examples: --with-
+  --with-kubectl <latest|1.15.0 (or other)>
+                                  Install kubectl. Examples: --with-
                                   kubectl=latest / --with-kubectl=1.17.0
 
-  -n, --name TEXT                 Image name.  [default: random]
+  -n, --name <name:tag>           Image name. Example: --name="myimage:0.0.1"
+                                  [default: random]
+
   --dry-run                       Do not build image.  [default: False]
   -o, --output [image-id|image-name|dockerfile]
                                   Command output options.  [default: image-id]
