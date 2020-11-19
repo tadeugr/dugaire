@@ -67,10 +67,13 @@ Usage: dugaire build [OPTIONS]
 
 Options:
   -apt, --apt-install TEXT        Comma separeted list of packages (no blank
-                                  space). Example: -apt=curl,vim
+                                  space) to install using apt-get install.
+                                  Example: -apt=curl,vim
 
   -pip3, --pip3-install TEXT      Comma separeted list of packages (no blank
-                                  space). Example: -pip3=ansible,jinja2
+                                  space) to install using pip3 install.
+                                  WARNING: requires -apt=python3-pip. Example:
+                                  -apt=python3-pip -pip3=ansible,jinja2
 
   --with-kubectl TEXT             Install kubectl version. Examples: --with-
                                   kubectl=latest / --with-kubectl=1.17.0

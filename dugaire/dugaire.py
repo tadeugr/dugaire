@@ -24,11 +24,11 @@ def cli():
 
 @cli.command()
 @click.option('--apt-install', '-apt', 
-  help='Comma separeted list of packages (no blank space). Example: -apt=curl,vim',
+  help='Comma separeted list of packages (no blank space) to install using apt-get install. Example: -apt=curl,vim',
   required=False
 )
 @click.option('--pip3-install', '-pip3',
-  help='Comma separeted list of packages (no blank space). Example: -pip3=ansible,jinja2',
+  help='Comma separeted list of packages (no blank space) to install using pip3 install. WARNING: requires -apt=python3-pip. Example: -apt=python3-pip -pip3=ansible,jinja2',
   required=False
 )
 @click.option('--with-kubectl',
