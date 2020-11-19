@@ -90,13 +90,13 @@ Options:
 
 ## Package/Dependency managers
 
-* `apt-get`
+* `apt-get`: you can install any package using `apt`. Use a comma separated (no blank space) list of packages you want to install. Example: `-apt=wget,iputils-ping`
 
-* `pip3`
+* `pip3`: you can install any package using `pip3`. Use a comma separated (no blank space) list of packages you want to install. Example: `-pip3=jinja2,pyyaml`. **WARNING** to use `pip3` you must explicitly install `pip3` using `apt`: `-apt=python3-pip`.
 
 ## Packages
 
-* `kubectl`
+* `kubectl`: use the parameter `--with-kubectl=latest` to install the latest version. For specific versions use the following format: `--with-kubectl=1.17.0`
 
 # Useful commands
 
