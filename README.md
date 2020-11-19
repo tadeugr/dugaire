@@ -108,3 +108,32 @@ Options:
 ```
 docker images -f label='builtwith=dugaire'
 ```
+
+# Known issues
+
+## RuntimeError: Python 3 was configured to use ASCII as encoding for the environment
+
+If you get an error like this one:
+
+```
+RuntimeError: Click will abort further execution because Python 3 was configured to use ASCII as encoding for the environment. Consult https://click.palletsprojects.com/python3/ for mitigation steps.
+```
+
+It is because `dugaire` uses Python3 and [Click](https://github.com/pallets/click), and according to Click "in Python 3, the encoding detection is done in the interpreter, and on Linux and certain other operating systems, its encoding handling is problematic". [Read more](https://click.palletsprojects.com/en/5.x/python3/#python-3-surrogate-handling).
+
+### Solution
+
+Setup your locale correctly, for example if you are using `en_US.UTF-8`, run:
+
+```
+apt update && apt-get -y install locales
+locale-gen --purge en_US.UTF-8
+
+export LC_ALL="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
+
+# Alternatively you can run: 
+#sudo dpkg-reconfigure locales
+```
+
+Then you should be able to run `dugaire`.
