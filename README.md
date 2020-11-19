@@ -1,18 +1,18 @@
 # Build Docker images with custom packages
 
-Build an image and run a container with `vim` and `curl`.
+Install `vim` and `curl` using `apt-get`.
 
 ```
 docker run -it --rm $(dugaire build -apt=vim,curl)
 ```
 
-Build an image and run a container with `vim`, `python3`, `pip3` and `ansible`.
+Install `vim`, `python3`, `pip3` using `apt-get` and install `ansible` using `pip3`.
 
 ```
 docker run -it --rm $(dugaire build -apt=vim,python3-pip -pip3=ansible)
 ```
 
-Build an image and run a container with `vim`, `kubectl v1.15.0`.
+Install `kubectl` binary version `v1.15.0` (use `--with-kubectl=latest` to install the latest version).
 
 ```
 docker run -it --rm $(dugaire build -apt=vim --with-kubectl=1.15.0)
