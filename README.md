@@ -23,7 +23,7 @@ docker run -it --rm $(dugaire build -apt=vim --with-kubectl=1.15.0)
 Clone this repository.
 
 ```
-git clone git@github.com:tadeugr/dugaire.git
+git clone https://github.com/tadeugr/dugaire.git
 ```
 
 `cd` to its directory.
@@ -53,11 +53,11 @@ Usage: dugaire build [OPTIONS]
 
   Examples:
 
-  Build an image and install vim using apt-get.
+  Build an image and install vim and curl using apt-get.
 
   $ dugaire build -apt=vim,curl
 
-  Build an image and install vim using apt-get.
+  Build an image and install python3 using apt-get and ansible using pip3.
 
   $ dugaire build -apt=python3-pip -pip3=ansible
 

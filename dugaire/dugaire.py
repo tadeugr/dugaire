@@ -61,11 +61,11 @@ def build(apt_install, pip3_install, with_kubectl, name, dry_run, output):
   \n
   Examples:
   \n
-  Build an image and install vim using apt-get.
+  Build an image and install vim and curl using apt-get.
   \n
   $ dugaire build -apt=vim,curl
   \n
-  Build an image and install vim using apt-get.
+  Build an image and install python3 using apt-get and ansible using pip3.
   \n
   $ dugaire build -apt=python3-pip -pip3=ansible
   \n
