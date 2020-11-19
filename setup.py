@@ -1,14 +1,16 @@
 from setuptools import setup
 
-setup(
-    name='dugaire',
-    version='0.0.1',
-    py_modules=['dugaire'],
-    install_requires=[
-        'docker'
-    ],
-    entry_points='''
-        [console_scripts]
-        dugaire=main:main
-    '''
-)
+config = {
+    'description': 'Quickly build docker images with custom packages.',
+    'author': 'Tadeu Granemann',
+    'version': '0.0.1',
+    'install_requires': ['click', 'docker'],
+    'packages': ['dugaire'],
+    'entry_points': {
+        'console_scripts': ['dugaire=dugaire.dugaire:main'],
+    },
+    'name':'dugaire',
+    'include_package_data':True
+}
+
+setup(**config)

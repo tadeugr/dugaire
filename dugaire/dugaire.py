@@ -1,77 +1,118 @@
+#!/usr/bin/env python3
+
 import os
 import sys
 import docker
 import click
 import jinja2
-import yaml
+import uuid
 from io import BytesIO
 
 _THIS_SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(1, f"{_THIS_SCRIPT_PATH}/pkg")
+
+def get_template(file_name):
+  templateLoader = jinja2.FileSystemLoader(searchpath=f"{_THIS_SCRIPT_PATH}/templates")
+  templateEnv = jinja2.Environment(loader=templateLoader)
+  TEMPLATE_FILE = file_name
+  template = templateEnv.get_template(TEMPLATE_FILE)
+  return template
 
 @click.group()
 def cli():
   pass
 
 @cli.command()
-#@click.option('--from', '-f', 'from_', required=False)
-@click.option('--apt-install', '-apt', required=False)
-@click.option('--with-kubectl', '-kubectl', required=False)
-def build(apt_install, with_kubectl):
+@click.option('--apt-install', '-apt', 
+  help='Comma separeted list of packages (no blank space). Example: -apt=curl,vim',
+  required=False
+)
+@click.option('--pip3-install', '-pip3',
+  help='Comma separeted list of packages (no blank space). Example: -pip3=ansible,jinja2',
+  required=False
+)
+@click.option('--with-kubectl',
+  help="Install kubectl version. Examples: --with-kubectl=latest / --with-kubectl=1.17.0",
+  required=False
+)
+@click.option('--name', '-n',
+  help='Image name.',
+  required=False,
+  default='random',
+  show_default=True
+)
+@click.option('--dry-run',
+  help='Do not build image.',
+  required=False,
+  default=False,
+  show_default=True,
+  is_flag=True
+)
+@click.option('--output', '-o',
+  help='Command output options.',
+  required=False,
+  default='image-id',
+  show_default=True,
+  type=click.Choice(['image-id', 'image-name', 'dockerfile'], case_sensitive=False)
+)
+def build(apt_install, pip3_install, with_kubectl, name, dry_run, output):
+  """
+  Build Docker images with custom packages.
+  \n
+  Examples:
+  """
 
   dockerfile = ''
-  dockerfile += 'FROM ubuntu:18.04'
-  dockerfile += "\n"
-  dockerfile += 'LABEL builtwith="dugaire"'
-  dockerfile += "\n"
-  dockerfile += 'RUN apt-get update -qq'
-  dockerfile += "\n"
-  dockerfile += f'RUN apt-get install -qqy --no-install-recommends curl ca-certificates'
-  dockerfile += "\n"
+
+  template = get_template('base.j2')
+  dockerfile += template.render()
 
   if apt_install:
-    apt_install_pkgs = apt_install.replace(',', ' ')  
-    dockerfile += f'RUN apt-get install -qqy --no-install-recommends {apt_install_pkgs}'
-    dockerfile += "\n"
+    packages = apt_install.replace(',', ' ')
+    template = get_template('apt_install.j2')
+    dockerfile += template.render(packages=packages)
+
+  if pip3_install:
+    packages = pip3_install.replace(',', ' ')
+    template = get_template('pip3_install.j2')
+    dockerfile += template.render(packages=packages)
 
   if with_kubectl:
-    download_url = 'https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
+    url = 'https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
     if with_kubectl != 'latest':
-      download_url = f'https://storage.googleapis.com/kubernetes-release/release/v{version}/bin/linux/amd64/kubectl'
+      url = f'https://storage.googleapis.com/kubernetes-release/release/v{version}/bin/linux/amd64/kubectl'
 
-    dockerfile += f'RUN curl -LO {download_url}'
-    dockerfile += "\n"
-    dockerfile += 'RUN chmod +x ./kubectl'
-    dockerfile += "\n"
-    dockerfile += 'RUN mv ./kubectl /usr/local/bin'
-    dockerfile += "\n"
+    template = get_template('with_kubectl.j2')
+    dockerfile += template.render(url=url)
   
-  print('********')
-  print(dockerfile)
-  print('********')
+  #print(dockerfile)
+  #sys.exit()
 
-  f = BytesIO(dockerfile.encode('utf-8'))
-  client = docker.from_env()
-  image, _ = client.images.build(
-      fileobj=f,
-      #path='.',
-      #dockerfile='Dockerfile',
-      tag='customimage',
-      #buildargs='version=1.13.0'
-  )
-  print(image)
-  print(_)
-  object_methods = [method_name for method_name in dir(image)
-                if callable(getattr(image, method_name))]
-  #print(object_methods)
-  #print(image.__dict__)
-
-  print(image.attrs["Id"])
-  print(image.attrs["RepoTags"])
-
-@cli.command('list')
-def list_():
-  print('list')
+  image_id = None
+  image_name = None
+  if not dry_run:
+    f = BytesIO(dockerfile.encode('utf-8'))
+    client = docker.from_env()
+    image_name = name
+    if image_name == 'random':
+      random_uuid = str(uuid.uuid4())
+      image_name = f'dug-{random_uuid}'
+      
+    image, error = client.images.build(
+        fileobj=f,
+        tag=image_name,
+    )
+    
+    image_id = image.attrs["Id"]
+    image_name = image.attrs["RepoTags"]
+  
+  if output == 'image-id':
+    click.echo(image_id)
+  if output == 'image-name':
+    click.echo(image_name)
+  if output == 'dockerfile':
+    click.echo(dockerfile)
+  
 
 def main():
   cli()
