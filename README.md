@@ -32,7 +32,7 @@ git clone https://github.com/tadeugr/dugaire.git
 cd dugaire
 ```
 
-Install it.
+Install it (`pip3` is a requirement).
 
 ```
 make install
