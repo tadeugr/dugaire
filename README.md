@@ -198,3 +198,9 @@ export LC_CTYPE="en_US.UTF-8"
 ```
 
 Then you should be able to run `dugaire`.
+
+# License
+
+[Apache-2.0 License](https://github.com/tadeugr/dugaire/blob/master/LICENSE)
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire?ref=badge_large)
