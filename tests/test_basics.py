@@ -12,17 +12,19 @@ sys.path.insert(1, f"{HERE}/../dugaire")
 """ Import custom modules. """
 
 import dugaire
-import setup_info
+import info
+
 
 def test_help():
-    
+
     cmd = ""
     cmd += "--help"
 
     result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
     output = result.output.strip()
 
-    assert f'Usage: cli [OPTIONS] COMMAND [ARGS]' in output
+    assert f"Usage: cli [OPTIONS] COMMAND [ARGS]" in output
+
 
 def test_version():
 
@@ -32,16 +34,7 @@ def test_version():
     result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
     output = result.output.strip()
 
-    setup_info_version = setup_info.get_version()
-    setup_info_prog_name = setup_info.get_prog_name()
+    info_version = info.get_version()
+    info_prog_name = info.get_prog_name()
 
-    assert f'{setup_info_prog_name}, version {setup_info_version}' == output
-
-def test_build():
-    cmd = ""
-    cmd += "build -apt=curl,nano"
-
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
-
-    assert 'sha256:' in output
+    assert f"{info_prog_name}, version {info_version}" == output

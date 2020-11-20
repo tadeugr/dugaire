@@ -14,3 +14,6 @@ test:
 
 setup:
 	python setup.py sdist bdist_wheel
+
+docker-rm:
+	docker rmi -f $(docker images -aq -f label='builtwith=dugaire')

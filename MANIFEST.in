@@ -1,1 +1,1 @@
-include templates/*.j2
+include dugaire/templates/*.j2

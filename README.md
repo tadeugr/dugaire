@@ -1,6 +1,8 @@
-![A cute kitten](doc/dugaire-logo.png)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire?ref=badge_shield)
+![dugaire](https://github.com/tadeugr/dugaire/blob/master/doc/dugaire-logo.png?raw=true)
 
+[![Documentation Status](https://readthedocs.org/projects/dugaire/badge/?version=latest)](https://dugaire.readthedocs.io/en/latest/?badge=latest)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire?ref=badge_shield)
 
 # Build Docker images with custom packages
 
@@ -62,6 +64,27 @@ You should have the command available.
 dugaire build --help
 ```
 
+# Enable autocomplete 
+
+To enable autocomplete for your current terminal session, run:
+
+```
+eval "$(_DUGAIRE_COMPLETE=source dugaire)"
+```
+*Follow the instructions bellow to permanently enable autocomplete.*
+
+## bash
+
+```
+echo 'eval "$(_DUGAIRE_COMPLETE=source dugaire)"' >> ~/.bashrc
+```
+
+## zsh
+
+```
+echo 'eval "$(_DUGAIRE_COMPLETE=source dugaire)"' >> ~/.zshrc
+```
+
 # Usage
 
 ```
@@ -73,24 +96,27 @@ Usage: dugaire build [OPTIONS]
 
   Build an image and install vim and curl using apt-get.
 
-  $ dugaire build -apt=vim,curl
+  $ dugaire build --apt=vim,curl
 
   Build an image and install python3 using apt-get and ansible using pip3.
 
-  $ dugaire build -apt=python3-pip -pip3=ansible
+  $ dugaire build --apt=python3-pip --pip3=ansible
 
   Build an image and install the latest version of kubectl.
 
   $ dugaire build --with-kubectl=latest
 
 Options:
-  -apt, --apt-install <pkg01|pkg01,pkg02>
-                                  Comma separeted list of packages (no blank
-                                  space) to install using apt-get install..
-                                  Example: -apt=curl,vim
+  --from <name:tag>               Base image (used in Dockerfile FROM).
+                                  Example: -f=ubuntu  [default: ubuntu:18.04;
+                                  required]
 
-  -pip3, --pip3-install <pkg01|pkg01,pkg02>
-                                  Comma separeted list of packages (no blank
+  --apt <pkg01|pkg01,pkg02>       Comma separeted list of packages (no blank
+                                  space) to install using apt-get install.
+                                  Requires a base image with apt-get. Example:
+                                  -apt=curl,vim
+
+  --pip3 <pkg01|pkg01,pkg02>      Comma separeted list of packages (no blank
                                   space) to install using pip3 install.
                                   WARNING: requires -apt=python3-pip. Example:
                                   -apt=python3-pip -pip3=ansible,jinja2
@@ -99,12 +125,14 @@ Options:
                                   Install kubectl. Examples: --with-
                                   kubectl=latest / --with-kubectl=1.17.0
 
-  -n, --name <name:tag>           Image name. Example: --name="myimage:0.0.1"
+  --name <name:tag>               Image name. Example: --name="myimage:0.0.1"
                                   [default: random]
 
   --dry-run                       Do not build image.  [default: False]
-  -o, --output [image-id|image-name|dockerfile]
-                                  Command output options.  [default: image-id]
+  --output [image.id|image.id.short|image.name|dockerfile]
+                                  Command output options.  [default:
+                                  image.id.short]
+
   --help                          Show this message and exit.
 ```
 
@@ -112,24 +140,34 @@ Options:
 
 ## Base images
 
-* `ubuntu:18.04`
+| Distro        | Tested with                                  |
+| ------------- |:--------------------------------------------:|
+| ubuntu        | `ubuntu:16.04` `ubuntu:18.04` `ubuntu:20.04` |
+
+*You may use base images that were built from the tested images.*
 
 ## Package/Dependency managers
 
-* `apt-get`: you can install any package using `apt`. Use a comma separated (no blank space) list of packages you want to install. Example: `-apt=wget,iputils-ping`
+* `apt-get`: you can install any package using `apt`. Use a comma separated (no blank space) list of packages you want to install. Example: `--apt=wget,iputils-ping`
 
-* `pip3`: you can install any package using `pip3`. Use a comma separated (no blank space) list of packages you want to install. Example: `-pip3=jinja2,pyyaml`. **WARNING** to use `pip3` you must explicitly install `pip3` using `apt`: `-apt=python3-pip`.
+* `pip3`: you can install any package using `pip3`. Use a comma separated (no blank space) list of packages you want to install. Example: `--pip3=jinja2,pyyaml`. **WARNING** to use `pip3` you must explicitly install `pip3` using `apt`: `--apt=python3-pip`.
 
 ## Packages
 
 * `kubectl`: use the parameter `--with-kubectl=latest` to install the latest version. For specific versions use the following format: `--with-kubectl=1.17.0`
 
-# Useful commands
+# Useful Docker commands
 
-## List images generated by dugaire
+## List images created with dugaire
 
 ```
 docker images -f label='builtwith=dugaire'
+```
+
+## Delete all images created with dugaire
+
+```
+docker rmi -f $(docker images -aq -f label='builtwith=dugaire')
 ```
 
 # Known issues
@@ -146,7 +184,7 @@ It is because `dugaire` uses Python3 and [Click](https://github.com/pallets/clic
 
 ### Solution
 
-Setup your locale correctly, for example if you are using `en_US.UTF-8`, run:
+Setup your locale correctly, for example if you want to use `en_US.UTF-8`, run:
 
 ```
 apt update && apt-get -y install locales
@@ -160,6 +198,3 @@ export LC_CTYPE="en_US.UTF-8"
 ```
 
 Then you should be able to run `dugaire`.
-
-## License
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire?ref=badge_large)
