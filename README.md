@@ -94,24 +94,27 @@ Usage: dugaire build [OPTIONS]
 
   Build an image and install vim and curl using apt-get.
 
-  $ dugaire build -apt=vim,curl
+  $ dugaire build --apt=vim,curl
 
   Build an image and install python3 using apt-get and ansible using pip3.
 
-  $ dugaire build -apt=python3-pip -pip3=ansible
+  $ dugaire build --apt=python3-pip --pip3=ansible
 
   Build an image and install the latest version of kubectl.
 
   $ dugaire build --with-kubectl=latest
 
 Options:
-  -apt, --apt-install <pkg01|pkg01,pkg02>
-                                  Comma separeted list of packages (no blank
-                                  space) to install using apt-get install..
-                                  Example: -apt=curl,vim
+  --from <name:tag>               Base image (used in Dockerfile FROM).
+                                  Example: -f=ubuntu  [default: ubuntu:18.04;
+                                  required]
 
-  -pip3, --pip3-install <pkg01|pkg01,pkg02>
-                                  Comma separeted list of packages (no blank
+  --apt <pkg01|pkg01,pkg02>       Comma separeted list of packages (no blank
+                                  space) to install using apt-get install.
+                                  Requires a base image with apt-get. Example:
+                                  -apt=curl,vim
+
+  --pip3 <pkg01|pkg01,pkg02>      Comma separeted list of packages (no blank
                                   space) to install using pip3 install.
                                   WARNING: requires -apt=python3-pip. Example:
                                   -apt=python3-pip -pip3=ansible,jinja2
@@ -120,12 +123,14 @@ Options:
                                   Install kubectl. Examples: --with-
                                   kubectl=latest / --with-kubectl=1.17.0
 
-  -n, --name <name:tag>           Image name. Example: --name="myimage:0.0.1"
+  --name <name:tag>               Image name. Example: --name="myimage:0.0.1"
                                   [default: random]
 
   --dry-run                       Do not build image.  [default: False]
-  -o, --output [image-id|image-name|dockerfile]
-                                  Command output options.  [default: image-id]
+  --output [image.id|image.id.short|image.name|dockerfile]
+                                  Command output options.  [default:
+                                  image.id.short]
+
   --help                          Show this message and exit.
 ```
 
