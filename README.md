@@ -201,10 +201,14 @@ Then you should be able to run `dugaire`.
 
 # License
 
-[Apache-2.0 License](https://github.com/tadeugr/dugaire/blob/master/LICENSE)
+## Product license
 
-Click bellow to open FOSSA scan overview.
+Apache License Version 2.0, January 2004. [Read more.](https://github.com/tadeugr/dugaire/blob/master/LICENSE)
+
+## FOSSA scan overview
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire?ref=badge_large)
 
-[FOSSA Live Project report](https://app.fossa.com/reports/826e35e3-c1be-4f82-a260-da5b362aa83b)
+## FOSSA Live Project report 
+
+The report is available [here](https://app.fossa.com/reports/826e35e3-c1be-4f82-a260-da5b362aa83b)
