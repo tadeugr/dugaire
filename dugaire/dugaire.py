@@ -39,6 +39,14 @@ def cli():
     type=str,
 )
 @click.option(
+    "--name",
+    help='Image name. Example: --name="myimage:0.0.1"',
+    metavar="<name:tag>",
+    required=False,
+    default="random",
+    show_default=True,
+)
+@click.option(
     "--apt",
     help="Comma separeted list of packages (no blank space) to install using apt-get install. Requires a base image with apt-get. Example: -apt=curl,vim",
     metavar="<pkg01|pkg01,pkg02>",
@@ -57,12 +65,20 @@ def cli():
     required=False,
 )
 @click.option(
-    "--name",
-    help='Image name. Example: --name="myimage:0.0.1"',
-    metavar="<name:tag>",
+    "--with-azurecli",
+    "--with-az",
+    help='Install Azure CLI. Examples: --with-azurecli=latest / For older versions, use pip3: --apt=python3-pip --pip="azure-cli==2.2.0"',
+    metavar="<latest>",
     required=False,
-    default="random",
+    type=click.Choice(["latest"], case_sensitive=False),
+)
+@click.option(
+    "--force",
+    help="Ignore Docker cache and build from scratch.",
+    required=False,
+    default=False,
     show_default=True,
+    is_flag=True,
 )
 @click.option(
     "--dry-run",
@@ -82,7 +98,7 @@ def cli():
         ["image.id", "image.id.short", "image.name", "dockerfile"], case_sensitive=False
     ),
 )
-def build(from_, apt, pip3, with_kubectl, name, dry_run, output):
+def build(from_, name, apt, pip3, with_kubectl, with_azurecli, force, dry_run, output):
     """
     Build Docker images with custom packages.
     \n
@@ -116,17 +132,46 @@ def build(from_, apt, pip3, with_kubectl, name, dry_run, output):
         dockerfile += template.render(packages=packages)
 
     if pip3:
-        packages = pip3.replace(",", " ")
+        dependency_list = {}
+        dependency_list["azure-cli"] = ["gcc", "python3-dev"]
+
+        pip3_install = pip3.split(",")
+        for package in pip3_install:
+            package_name = package.split("==")[0]
+            if package_name in dependency_list:
+                dependency = " ".join(dependency_list[package_name])
+                apt_template = util.get_template("apt.j2")
+                dockerfile += apt_template.render(packages=dependency)
+
+        packages = " ".join(pip3_install)
         template = util.get_template("pip3.j2")
         dockerfile += template.render(packages=packages)
 
     if with_kubectl:
+        dependency_list = {}
+        dependency_list = ["curl", "ca-certificates"]
+        dependency = " ".join(dependency_list)
+
+        apt_template = util.get_template("apt.j2")
+        dockerfile += apt_template.render(packages=dependency)
+
         url = "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
         if with_kubectl != "latest":
             url = f"https://storage.googleapis.com/kubernetes-release/release/v{with_kubectl}/bin/linux/amd64/kubectl"
 
         template = util.get_template("with_kubectl.j2")
         dockerfile += template.render(url=url)
+
+    if with_azurecli:
+        dependency_list = {}
+        dependency_list = ["curl", "ca-certificates"]
+        dependency = " ".join(dependency_list)
+
+        apt_template = util.get_template("apt.j2")
+        dockerfile += apt_template.render(packages=dependency)
+
+        template = util.get_template("with_azurecli.j2")
+        dockerfile += template.render()
 
     image_id = None
     image_name = None
@@ -140,7 +185,7 @@ def build(from_, apt, pip3, with_kubectl, name, dry_run, output):
             image_name = f"dug-{random_name}:{random_tag}"
 
         image, error = client.images.build(
-            fileobj=f, tag=image_name, nocache=False, rm=True, forcerm=True
+            fileobj=f, tag=image_name, nocache=force, rm=True, forcerm=True
         )
 
         image_id = image.attrs["Id"]
@@ -220,13 +265,26 @@ def remove(image):
         sys.exit()
 
 
-def main():
-    """ Main function executed by the CLI command. """
+def patch_click() -> None:
+    """Fix Click ASCII encoding issue."""
+    try:
+        from click import core
+        from click import _unicodefun  # type: ignore
+    except ModuleNotFoundError:
+        return
 
+    for module in (core, _unicodefun):
+        if hasattr(module, "_verify_python3_env"):
+            module._verify_python3_env = lambda: None
+
+
+def main():
+    """Main function executed by the CLI command."""
+    patch_click()
     click_completion.init()
     cli()
 
 
 if __name__ == "__main__":
-    """ Call the main function. """
+    """Call the main function."""
     main()

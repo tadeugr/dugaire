@@ -1,4 +1,4 @@
-![dugaire](https://github.com/tadeugr/dugaire/blob/master/doc/dugaire-logo.png?raw=true)
+![dugaire](https://github.com/tadeugr/dugaire/blob/master/docs/assets/dugaire-logo.png?raw=true)
 
 [![Documentation Status](https://readthedocs.org/projects/dugaire/badge/?version=latest)](https://dugaire.readthedocs.io/en/latest/?badge=latest)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -111,6 +111,9 @@ Options:
                                   Example: -f=ubuntu  [default: ubuntu:18.04;
                                   required]
 
+  --name <name:tag>               Image name. Example: --name="myimage:0.0.1"
+                                  [default: random]
+
   --apt <pkg01|pkg01,pkg02>       Comma separeted list of packages (no blank
                                   space) to install using apt-get install.
                                   Requires a base image with apt-get. Example:
@@ -125,8 +128,14 @@ Options:
                                   Install kubectl. Examples: --with-
                                   kubectl=latest / --with-kubectl=1.17.0
 
-  --name <name:tag>               Image name. Example: --name="myimage:0.0.1"
-                                  [default: random]
+  --with-azurecli, --with-az <latest>
+                                  Install Azure CLI. Examples: --with-
+                                  azurecli=latest / For older versions, use
+                                  pip3: --apt=python3-pip --pip="azure-
+                                  cli==2.2.0"
+
+  --force                         Ignore Docker cache and build from scratch.
+                                  [default: False]
 
   --dry-run                       Do not build image.  [default: False]
   --output [image.id|image.id.short|image.name|dockerfile]
@@ -148,13 +157,59 @@ Options:
 
 ## Package/Dependency managers
 
-* `apt-get`: you can install any package using `apt`. Use a comma separated (no blank space) list of packages you want to install. Example: `--apt=wget,iputils-ping`
+### apt-get
 
-* `pip3`: you can install any package using `pip3`. Use a comma separated (no blank space) list of packages you want to install. Example: `--pip3=jinja2,pyyaml`. **WARNING** to use `pip3` you must explicitly install `pip3` using `apt`: `--apt=python3-pip`.
+You can install any package using `apt`. Use a comma separated (no blank space) list of packages you want to install. Example: `--apt=wget,iputils-ping`.
 
-## Packages
+### pip3
 
-* `kubectl`: use the parameter `--with-kubectl=latest` to install the latest version. For specific versions use the following format: `--with-kubectl=1.17.0`
+**WARNING** to use `pip3` you must explicitly install `pip3` using `apt`: `--apt=python3-pip`.
+
+You can install any package using `pip3`. Use a comma separated (no blank space) list of packages you want to install. Example: `--pip3=jinja2,pyyaml`. 
+
+## Applications
+
+### Azure CLI
+
+Install Azure Command Line Interface.
+
+`--with-azurecli=latest` to install the latest version.
+
+`--apt=python3-pip --pip3="azure-cli==2.2.0"` *(example)* to install specific versions.
+
+See all versions available [here](https://github.com/Azure/azure-cli/releases).
+
+#### Support test table
+
+*You may install any version available. The table bellow only describes versions included in the automated tests.*
+
+| Version | Base image     | Options                                                                          | Status |
+|---------|----------------|----------------------------------------------------------------------------------|--------|
+| latest  | `ubuntu:20.04` | `dugaire build --with-azurecli=latest`                                           | PASSED |
+| 2.14.2  | `ubuntu:20.04` | `dugaire build --from=ubuntu:20.04 --apt=python3-pip --pip3="azure-cli==2.14.2"` | PASSED |
+
+
+### kubectl
+
+Install kubectl.
+
+`--with-kubectl=latest` to install the latest version.
+
+`--with-kubectl=1.17.0` *(example)* to install specific versions.
+
+See all versions available [here](https://github.com/kubernetes/kubectl/releases).
+
+#### Support test table
+
+*You may install any version available. The table bellow only describes versions included in the automated tests.*
+
+| Version | Base image     | Options                                                    | Status |
+|---------|----------------|------------------------------------------------------------|--------|
+| latest  | `ubuntu:20.04` | `dugaire build --from=ubuntu:20.04 --with-kubectl=latest`  | PASSED |
+| 1.18.0  | `ubuntu:20.04` | `dugaire build --from=ubuntu:20.04 --with-kubectl=1.18.0"` | PASSED |
+| 1.17.0  | `ubuntu:20.04` | `dugaire build --from=ubuntu:20.04 --with-kubectl=1.17.0"` | PASSED |
+| 1.16.0  | `ubuntu:18.04` | `dugaire build --from=ubuntu:18.04 --with-kubectl=1.16.0"` | PASSED |
+| 1.15.0  | `ubuntu:18.04` | `dugaire build --from=ubuntu:18.04 --with-kubectl=1.15.0"` | PASSED |
 
 # Useful Docker commands
 
