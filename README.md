@@ -1,4 +1,4 @@
-![dugaire](doc/dugaire-logo.png)
+![dugaire](https://github.com/tadeugr/dugaire/blob/master/doc/dugaire-logo.png?raw=true)
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire?ref=badge_shield)
 

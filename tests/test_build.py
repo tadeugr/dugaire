@@ -14,7 +14,7 @@ sys.path.insert(1, f"{HERE}/../dugaire")
 """ Import custom modules. """
 
 import dugaire
-import setup_info
+import info
 
 def test_build_default():
     cmd = ""

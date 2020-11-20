@@ -13,15 +13,14 @@ from io import BytesIO
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, f"{HERE}")
-sys.path.insert(1, f"{HERE}/../")
 
 """ Import custom modules. """
 
-import setup_info
+import info
 import util
 
 @click.group()
-@click.version_option(setup_info.get_version(), prog_name=setup_info.get_prog_name())
+@click.version_option(info.get_version(), prog_name=info.get_prog_name())
 def cli():
   """ CLI tool to build and manage custom Docker images. """
   pass

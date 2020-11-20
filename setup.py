@@ -7,18 +7,19 @@ from setuptools import find_packages, setup
 
 """ Import custom modules. """
 
-import setup_info
-
 # The directory containing this file
 HERE = os.path.dirname(os.path.realpath(__file__))
 
+sys.path.insert(1, f"{HERE}/dugaire")
+
+import info
 
 # REAME content
 README = open(os.path.join(HERE, "README.md")).read()
 
 setup(
-    name=setup_info.get_prog_name(),
-    version=setup_info.get_version(),
+    name=info.get_prog_name(),
+    version=info.get_version(),
     description="Build Docker images with custom packages for local development, testing and daily tasks.",
     long_description=README,
     long_description_content_type="text/markdown",
