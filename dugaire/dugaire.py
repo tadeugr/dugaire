@@ -125,11 +125,29 @@ def build(from_, name, apt, pip3, with_kubectl, with_azurecli, dry_run, output):
         dockerfile += template.render(packages=packages)
 
     if pip3:
-        packages = pip3.replace(",", " ")
+        dependency_list = {}
+        dependency_list['azure-cli'] = ['python3-dev']
+
+        pip3_install = pip3.split(",")
+        for package in pip3_install:
+            package_name = package.split("==")[0]
+            if package_name in dependency_list:
+                dependency = ' '.join(dependency_list[package_name])
+                apt_template = util.get_template("apt.j2")
+                dockerfile += apt_template.render(packages=dependency)
+
+        packages = ' '.join(pip3_install)
         template = util.get_template("pip3.j2")
         dockerfile += template.render(packages=packages)
 
     if with_kubectl:
+        dependency_list = {}
+        dependency_list = ['curl', 'ca-certificates']
+        dependency = ' '.join(dependency_list)
+
+        apt_template = util.get_template("apt.j2")
+        dockerfile += apt_template.render(packages=dependency)
+
         url = "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
         if with_kubectl != "latest":
             url = f"https://storage.googleapis.com/kubernetes-release/release/v{with_kubectl}/bin/linux/amd64/kubectl"
