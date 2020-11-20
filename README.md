@@ -162,7 +162,7 @@ Options:
 docker images -f label='builtwith=dugaire'
 ```
 
-## Delete all created with dugaire
+## Delete all images created with dugaire
 
 ```
 docker rmi $(docker images -aq -f label='builtwith=dugaire')
