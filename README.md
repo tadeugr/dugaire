@@ -1,5 +1,6 @@
 ![dugaire](https://github.com/tadeugr/dugaire/blob/master/doc/dugaire-logo.png?raw=true)
 
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire?ref=badge_shield)
 
 # Build Docker images with custom packages
@@ -165,7 +166,7 @@ docker images -f label='builtwith=dugaire'
 ## Delete all images created with dugaire
 
 ```
-docker rmi $(docker images -aq -f label='builtwith=dugaire')
+docker rmi -f $(docker images -aq -f label='builtwith=dugaire')
 ```
 
 # Known issues
@@ -182,7 +183,7 @@ It is because `dugaire` uses Python3 and [Click](https://github.com/pallets/clic
 
 ### Solution
 
-Setup your locale correctly, for example if you are using `en_US.UTF-8`, run:
+Setup your locale correctly, for example if you want to use `en_US.UTF-8`, run:
 
 ```
 apt update && apt-get -y install locales

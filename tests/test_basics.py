@@ -14,15 +14,17 @@ sys.path.insert(1, f"{HERE}/../dugaire")
 import dugaire
 import info
 
+
 def test_help():
-    
+
     cmd = ""
     cmd += "--help"
 
     result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
     output = result.output.strip()
 
-    assert f'Usage: cli [OPTIONS] COMMAND [ARGS]' in output
+    assert f"Usage: cli [OPTIONS] COMMAND [ARGS]" in output
+
 
 def test_version():
 
@@ -35,4 +37,4 @@ def test_version():
     info_version = info.get_version()
     info_prog_name = info.get_prog_name()
 
-    assert f'{info_prog_name}, version {info_version}' == output
+    assert f"{info_prog_name}, version {info_version}" == output

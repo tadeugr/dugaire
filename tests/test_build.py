@@ -16,6 +16,7 @@ sys.path.insert(1, f"{HERE}/../dugaire")
 import dugaire
 import info
 
+
 def test_build_default():
     cmd = ""
     cmd += "build"
@@ -24,6 +25,7 @@ def test_build_default():
     output = result.output.strip()
 
     assert len(output) == 12
+
 
 def test_build_ubuntu1604():
     cmd = ""
@@ -34,6 +36,7 @@ def test_build_ubuntu1604():
 
     assert len(output) == 12
 
+
 def test_build_ubuntu1804():
     cmd = ""
     cmd += "build --from=ubuntu:18.04"
@@ -42,6 +45,7 @@ def test_build_ubuntu1804():
     output = result.output.strip()
 
     assert len(output) == 12
+
 
 def test_build_ubuntu2004():
     cmd = ""
@@ -52,9 +56,10 @@ def test_build_ubuntu2004():
 
     assert len(output) == 12
 
+
 def test_build_ubuntu1804_apt_pip3_kubectl():
 
-    install_kubectl_version = '1.17.0'
+    install_kubectl_version = "1.17.0"
 
     cmd = ""
     cmd += f"build --from=ubuntu:18.04 --apt=vim,python3-pip --pip3=ansible --with-kubectl={install_kubectl_version}"
@@ -65,9 +70,13 @@ def test_build_ubuntu1804_apt_pip3_kubectl():
     assert len(image_id) == 12
 
     client = docker.from_env()
-    docker_run_output = client.containers.run(image_id, 'kubectl version --client=true --output=json', auto_remove=True)
+    docker_run_output = client.containers.run(
+        image_id, "kubectl version --client=true --output=json", auto_remove=True
+    )
     docker_run_output = docker_run_output.decode("utf-8")
     kubectl_version = json.loads(docker_run_output)
     print(kubectl_version)
 
-    assert f'v{install_kubectl_version}' == kubectl_version["clientVersion"]["gitVersion"]
+    assert (
+        f"v{install_kubectl_version}" == kubectl_version["clientVersion"]["gitVersion"]
+    )
