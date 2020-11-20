@@ -1,7 +1,7 @@
 ![dugaire](https://github.com/tadeugr/dugaire/blob/master/docs/assets/dugaire-logo.png?raw=true)
 
 
-[![PyPI](https://img.shields.io/badge/pypi-0.0.7-blue)](https://pypi.org/project/dugaire/)
+[![PyPI](https://img.shields.io/badge/pypi-0.0.8-blue)](https://pypi.org/project/dugaire/)
 [![Python](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue)](https://pypi.org/project/dugaire/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Build](https://github.com/tadeugr/dugaire/workflows/build/badge.svg)](https://github.com/tadeugr/dugaire/workflows/build/badge.svg)

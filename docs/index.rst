@@ -345,7 +345,7 @@ FOSSA Live Project report
 The report is available
 `here <https://app.fossa.com/reports/826e35e3-c1be-4f82-a260-da5b362aa83b>`__
 
-.. |PyPI| image:: https://img.shields.io/badge/pypi-0.0.7-blue
+.. |PyPI| image:: https://img.shields.io/badge/pypi-0.0.8-blue
    :target: https://pypi.org/project/dugaire/
 .. |Python| image:: https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue
    :target: https://pypi.org/project/dugaire/
