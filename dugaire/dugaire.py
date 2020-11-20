@@ -39,6 +39,14 @@ def cli():
     type=str,
 )
 @click.option(
+    "--name",
+    help='Image name. Example: --name="myimage:0.0.1"',
+    metavar="<name:tag>",
+    required=False,
+    default="random",
+    show_default=True,
+)
+@click.option(
     "--apt",
     help="Comma separeted list of packages (no blank space) to install using apt-get install. Requires a base image with apt-get. Example: -apt=curl,vim",
     metavar="<pkg01|pkg01,pkg02>",
@@ -57,12 +65,13 @@ def cli():
     required=False,
 )
 @click.option(
-    "--name",
-    help='Image name. Example: --name="myimage:0.0.1"',
-    metavar="<name:tag>",
+    "--with-azurecli", "--with-az",
+    help='Install Azure CLI. Examples: --with-azurecli=latest / For older versions, use pip3: --apt=python3-pip --pip="azure-cli==2.2.0"',
+    metavar="<latest>",
     required=False,
-    default="random",
-    show_default=True,
+    type=click.Choice(
+        ["latest"], case_sensitive=False
+    ),
 )
 @click.option(
     "--dry-run",
@@ -82,7 +91,7 @@ def cli():
         ["image.id", "image.id.short", "image.name", "dockerfile"], case_sensitive=False
     ),
 )
-def build(from_, apt, pip3, with_kubectl, name, dry_run, output):
+def build(from_, name, apt, pip3, with_kubectl, with_azurecli, dry_run, output):
     """
     Build Docker images with custom packages.
     \n
@@ -127,6 +136,10 @@ def build(from_, apt, pip3, with_kubectl, name, dry_run, output):
 
         template = util.get_template("with_kubectl.j2")
         dockerfile += template.render(url=url)
+
+    if with_azurecli:
+        template = util.get_template("with_azurecli.j2")
+        dockerfile += template.render()
 
     image_id = None
     image_name = None
@@ -220,13 +233,26 @@ def remove(image):
         sys.exit()
 
 
-def main():
-    """ Main function executed by the CLI command. """
+def patch_click() -> None:
+    """Fix Click ASCII encoding issue."""
+    try:
+        from click import core
+        from click import _unicodefun  # type: ignore
+    except ModuleNotFoundError:
+        return
 
+    for module in (core, _unicodefun):
+        if hasattr(module, "_verify_python3_env"):
+            module._verify_python3_env = lambda: None
+
+
+def main():
+    """Main function executed by the CLI command."""
+    patch_click()
     click_completion.init()
     cli()
 
 
 if __name__ == "__main__":
-    """ Call the main function. """
+    """Call the main function."""
     main()

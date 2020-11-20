@@ -152,9 +152,37 @@ Options:
 
 * `pip3`: you can install any package using `pip3`. Use a comma separated (no blank space) list of packages you want to install. Example: `--pip3=jinja2,pyyaml`. **WARNING** to use `pip3` you must explicitly install `pip3` using `apt`: `--apt=python3-pip`.
 
-## Packages
+## Applications
 
-* `kubectl`: use the parameter `--with-kubectl=latest` to install the latest version. For specific versions use the following format: `--with-kubectl=1.17.0`
+### Azure CLI
+
+Install Azure Command Line Interface.
+
+`--with-azurecli=latest` to install the latest version.
+
+`--apt=python3-pip --pip3="azure-cli==2.2.0"` to install specific versions.
+
+See all versions available [here](https://github.com/Azure/azure-cli/releases).
+
+#### Support test table
+
+*You may install any version available. The table bellow only describes versions included in the automated tests.*
+
+| Version | Options                                                      | Status |
+|---------|--------------------------------------------------------------|--------|
+| latest  | `dugaire build --with-azurecli=latest`                       | PASSED |
+| 2.14.2  | `dugaire build --apt=python3-pip --pip3="azure-cli==2.14.2"` | PASSED |
+
+
+
+
+### kubectl
+
+Install kubectl.
+
+`--with-kubectl=latest` to install the latest version.
+
+`--with-kubectl=1.17.0`  to install specific versions.
 
 # Useful Docker commands
 
