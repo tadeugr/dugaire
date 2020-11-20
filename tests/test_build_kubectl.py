@@ -16,47 +16,6 @@ sys.path.insert(1, f"{HERE}/../dugaire")
 import dugaire
 import info
 
-
-def test_latest():
-    cmd = ""
-    cmd += "build"
-
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
-
-    assert len(output) == 12
-
-
-def test_build_ubuntu1604():
-    cmd = ""
-    cmd += "build --from=ubuntu:16.04"
-
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
-
-    assert len(output) == 12
-
-
-def test_build_ubuntu1804():
-    cmd = ""
-    cmd += "build --from=ubuntu:18.04"
-
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
-
-    assert len(output) == 12
-
-
-def test_build_ubuntu2004():
-    cmd = ""
-    cmd += "build --from=ubuntu:20.04"
-
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
-
-    assert len(output) == 12
-
-
 def test_build_ubuntu1804_apt_pip3_kubectl():
 
     install_kubectl_version = "1.17.0"

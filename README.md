@@ -160,7 +160,7 @@ Install Azure Command Line Interface.
 
 `--with-azurecli=latest` to install the latest version.
 
-`--apt=python3-pip --pip3="azure-cli==2.2.0"` to install specific versions.
+`--apt=python3-pip --pip3="azure-cli==2.2.0"` *(example)* to install specific versions.
 
 See all versions available [here](https://github.com/Azure/azure-cli/releases).
 
@@ -182,7 +182,19 @@ Install kubectl.
 
 `--with-kubectl=latest` to install the latest version.
 
-`--with-kubectl=1.17.0`  to install specific versions.
+`--with-kubectl=1.17.0` *(example)* to install specific versions.
+
+See all versions available [here](https://github.com/kubernetes/kubectl/releases).
+
+#### Support test table
+
+*You may install any version available. The table bellow only describes versions included in the automated tests.*
+
+| Version | Options                                                      | Status |
+|---------|--------------------------------------------------------------|--------|
+| latest  | `dugaire build --with-azurecli=latest`                       | PASSED |
+| 2.14.2  | `dugaire build --apt=python3-pip --pip3="azure-cli==2.14.2"` | PASSED |
+
 
 # Useful Docker commands
 
