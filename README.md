@@ -1,5 +1,6 @@
 ![dugaire](https://github.com/tadeugr/dugaire/blob/master/doc/dugaire-logo.png?raw=true)
 
+[![Documentation Status](https://readthedocs.org/projects/dugaire/badge/?version=latest)](https://dugaire.readthedocs.io/en/latest/?badge=latest)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire?ref=badge_shield)
 
