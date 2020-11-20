@@ -146,9 +146,9 @@ Options:
 
 ## Package/Dependency managers
 
-* `apt-get`: you can install any package using `apt`. Use a comma separated (no blank space) list of packages you want to install. Example: `-apt=wget,iputils-ping`
+* `apt-get`: you can install any package using `apt`. Use a comma separated (no blank space) list of packages you want to install. Example: `--apt=wget,iputils-ping`
 
-* `pip3`: you can install any package using `pip3`. Use a comma separated (no blank space) list of packages you want to install. Example: `-pip3=jinja2,pyyaml`. **WARNING** to use `pip3` you must explicitly install `pip3` using `apt`: `-apt=python3-pip`.
+* `pip3`: you can install any package using `pip3`. Use a comma separated (no blank space) list of packages you want to install. Example: `--pip3=jinja2,pyyaml`. **WARNING** to use `pip3` you must explicitly install `pip3` using `apt`: `--apt=python3-pip`.
 
 ## Packages
 
