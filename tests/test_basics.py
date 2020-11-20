@@ -36,39 +36,3 @@ def test_version():
     setup_info_prog_name = setup_info.get_prog_name()
 
     assert f'{setup_info_prog_name}, version {setup_info_version}' == output
-
-def test_build_default():
-    cmd = ""
-    cmd += "build"
-
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
-
-    assert 'sha256:' in output
-
-def test_build_ubuntu1604():
-    cmd = ""
-    cmd += "build --from=ubuntu:16.04"
-
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
-
-    assert 'sha256:' in output
-
-def test_build_ubuntu1804():
-    cmd = ""
-    cmd += "build --from=ubuntu:18.04"
-
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
-
-    assert 'sha256:' in output
-
-def test_build_ubuntu2004():
-    cmd = ""
-    cmd += "build --from=ubuntu:20.04"
-
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
-
-    assert 'sha256:' in output

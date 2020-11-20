@@ -8,6 +8,7 @@ import docker
 import click
 import jinja2
 import uuid
+import click_completion
 from io import BytesIO
 
 HERE = os.path.dirname(os.path.realpath(__file__))
@@ -66,9 +67,9 @@ def cli():
 @click.option('--output',
   help='Command output options.',
   required=False,
-  default='image-id',
+  default='image.id.short',
   show_default=True,
-  type=click.Choice(['image-id', 'image-name', 'dockerfile'], case_sensitive=False)
+  type=click.Choice(['image.id', 'image.id.short', 'image.name', 'dockerfile'], case_sensitive=False)
 )
 def build(from_, apt, pip3, with_kubectl, name, dry_run, output):
   """
@@ -128,47 +129,85 @@ def build(from_, apt, pip3, with_kubectl, name, dry_run, output):
     image, error = client.images.build(
         fileobj=f,
         tag=image_name,
+        nocache=False,
+        rm=True,
+        forcerm=True
     )
     
     image_id = image.attrs["Id"]
     image_name = image.attrs["RepoTags"][0]
   
-  if output == 'image-id':
+  if output == 'image.id':
     click.echo(image_id)
-  if output == 'image-name':
+  if output == 'image.id.short':
+    click.echo(image_id.replace('sha256:', '')[:12])
+  if output == 'image.name':
     click.echo(image_name)
   if output == 'dockerfile':
     click.echo(dockerfile)
 
 @cli.command("list", help="List images built with dugaire.")
-@click.option('--short', '-s',
-  help='Print short image ID.',
+@click.option('--short/--not-short', '-s',
+  help='Print short or full image ID.',
   required=False,
   default=True,
   show_default=True,
   is_flag=True
 )
 def list_(short):
-  client = docker.from_env()
-  images = client.images.list(filters={"label":[util.get_dugaire_image_label()]})
-  print_images = []
-  for image in images:
-    image_id = image.id
-    if short:
-      image_id = image_id.replace('sha256:', '')[:12]
+  try:
+    client = docker.from_env()
+    images = client.images.list(filters={"label":[util.get_dugaire_image_label()]})
 
-    image_tag = image.tags
+    if not len(images):
+      click.echo("No images built with dugaire found.")
+      sys.exit(0)
+    
+    for image in images:
+      image_id = image.id
+      if short:
+        image_id = image_id.replace('sha256:', '')[:12]
 
-    print_images.append([image_id, image_tag])
-  if len(print_images):
-    print(util.custom_tabulate(print_images, headers=['Image ID', 'Image tags']))
-  else:
-    click.echo("No images built with dugaire found.")
+      click.echo(f'-----------')
+      click.echo(f'Image ID: {image_id}')
+      join_image_tags = ' '.join(image.tags)
+      click.echo(f'Image tags: {join_image_tags}')
+    click.echo(f'-----------')
+      
+  except Exception as e:
+    print(e)
+    sys.exit()
 
+@cli.command(help="Remove images built with dugaire.")
+@click.option('--image',
+  help='Comma separated list of Image IDs.',
+  required=True,
+  metavar='<Image ID|all>',
+)
+def remove(image):
+  try:
+    client = docker.from_env()
+
+    if image == 'all':
+      images = client.images.list(filters={"label":[util.get_dugaire_image_label()]})
+      for docker_image in images:
+        client.images.remove(image=docker_image.id, force=True)
+      
+      click.echo('Images removed.')
+      sys.exit(0)
+
+    client.images.remove(image=image, force=True)
+    click.echo('Image removed.')
+    
+  except Exception as e:
+    print(e)
+    sys.exit()
+  
 
 def main():
   """ Main function executed by the CLI command. """
 
+  click_completion.init()
   cli()
 
 if __name__ == '__main__':

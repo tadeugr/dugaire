@@ -5,7 +5,6 @@
 import os
 import sys
 import jinja2
-from tabulate import tabulate
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, f"{HERE}")
@@ -18,11 +17,6 @@ def get_template(file_name):
   TEMPLATE_FILE = file_name
   template = templateEnv.get_template(TEMPLATE_FILE)
   return template
-
-def custom_tabulate(data, headers):
-    """ Print tabulated data. """
-
-    return tabulate(data, headers, numalign="right")
 
 def get_dugaire_image_label(return_format = 'string'):
     """ Get the default label used when building images. """

@@ -37,7 +37,7 @@ setup(
         'docker==4.3.1',
         'click==7.1.2',
         'Jinja2==2.11.2',
-        'tabulate==0.8.7'
+        'click-completion==0.5.2'
     ],
     entry_points={"console_scripts": ["dugaire=dugaire.dugaire:main"]},
 )
