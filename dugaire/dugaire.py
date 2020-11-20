@@ -65,13 +65,20 @@ def cli():
     required=False,
 )
 @click.option(
-    "--with-azurecli", "--with-az",
+    "--with-azurecli",
+    "--with-az",
     help='Install Azure CLI. Examples: --with-azurecli=latest / For older versions, use pip3: --apt=python3-pip --pip="azure-cli==2.2.0"',
     metavar="<latest>",
     required=False,
-    type=click.Choice(
-        ["latest"], case_sensitive=False
-    ),
+    type=click.Choice(["latest"], case_sensitive=False),
+)
+@click.option(
+    "--force",
+    help="Ignore Docker cache and build from scratch.",
+    required=False,
+    default=False,
+    show_default=True,
+    is_flag=True,
 )
 @click.option(
     "--dry-run",
@@ -91,7 +98,7 @@ def cli():
         ["image.id", "image.id.short", "image.name", "dockerfile"], case_sensitive=False
     ),
 )
-def build(from_, name, apt, pip3, with_kubectl, with_azurecli, dry_run, output):
+def build(from_, name, apt, pip3, with_kubectl, with_azurecli, force, dry_run, output):
     """
     Build Docker images with custom packages.
     \n
@@ -126,24 +133,24 @@ def build(from_, name, apt, pip3, with_kubectl, with_azurecli, dry_run, output):
 
     if pip3:
         dependency_list = {}
-        dependency_list['azure-cli'] = ['python3-dev']
+        dependency_list["azure-cli"] = ["gcc", "python3-dev"]
 
         pip3_install = pip3.split(",")
         for package in pip3_install:
             package_name = package.split("==")[0]
             if package_name in dependency_list:
-                dependency = ' '.join(dependency_list[package_name])
+                dependency = " ".join(dependency_list[package_name])
                 apt_template = util.get_template("apt.j2")
                 dockerfile += apt_template.render(packages=dependency)
 
-        packages = ' '.join(pip3_install)
+        packages = " ".join(pip3_install)
         template = util.get_template("pip3.j2")
         dockerfile += template.render(packages=packages)
 
     if with_kubectl:
         dependency_list = {}
-        dependency_list = ['curl', 'ca-certificates']
-        dependency = ' '.join(dependency_list)
+        dependency_list = ["curl", "ca-certificates"]
+        dependency = " ".join(dependency_list)
 
         apt_template = util.get_template("apt.j2")
         dockerfile += apt_template.render(packages=dependency)
@@ -156,6 +163,13 @@ def build(from_, name, apt, pip3, with_kubectl, with_azurecli, dry_run, output):
         dockerfile += template.render(url=url)
 
     if with_azurecli:
+        dependency_list = {}
+        dependency_list = ["curl", "ca-certificates"]
+        dependency = " ".join(dependency_list)
+
+        apt_template = util.get_template("apt.j2")
+        dockerfile += apt_template.render(packages=dependency)
+
         template = util.get_template("with_azurecli.j2")
         dockerfile += template.render()
 
@@ -171,7 +185,7 @@ def build(from_, name, apt, pip3, with_kubectl, with_azurecli, dry_run, output):
             image_name = f"dug-{random_name}:{random_tag}"
 
         image, error = client.images.build(
-            fileobj=f, tag=image_name, nocache=False, rm=True, forcerm=True
+            fileobj=f, tag=image_name, nocache=force, rm=True, forcerm=True
         )
 
         image_id = image.attrs["Id"]
