@@ -1,2 +1,4 @@
 twine
 pytest
+black
+flake8
