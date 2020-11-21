@@ -1,6 +1,6 @@
 # dugaire
 
-![dugaire](https://github.com/tadeugr/dugaire/blob/develop/docs/assets/tty.gif?raw=true)
+![dugaire](https://github.com/tadeugr/dugaire/blob/master/docs/assets/tty.gif?raw=true)
 
 [![PyPI](https://img.shields.io/badge/pypi-0.0.8-blue)](https://pypi.org/project/dugaire/)
 [![Python](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue)](https://pypi.org/project/dugaire/)
