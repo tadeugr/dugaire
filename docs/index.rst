@@ -1,4 +1,7 @@
-.. figure:: https://github.com/tadeugr/dugaire/blob/master/docs/assets/dugaire-logo.png?raw=true
+dugaire
+=======
+
+.. figure:: https://github.com/tadeugr/dugaire/blob/master/docs/assets/tty.gif?raw=true
    :alt: dugaire
 
    dugaire
