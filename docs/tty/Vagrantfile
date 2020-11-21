@@ -1,0 +1,7 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-18.04"
+  config.vm.provision "file", source: "./init.sh", destination: "~/init.sh"
+  config.vm.provision "file", source: "~/.ssh/id_rsa", destination: "~/.ssh/id_rsa"
+  config.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/id_rsa.pub"
+  config.vm.synced_folder "~/vagrant/", "/vagrant"
+end
