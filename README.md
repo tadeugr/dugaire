@@ -2,14 +2,14 @@
 
 ![dugaire](https://github.com/tadeugr/dugaire/blob/master/docs/assets/tty.gif?raw=true)
 
-[![PyPI](https://img.shields.io/badge/pypi-0.0.8-blue)](https://pypi.org/project/dugaire/)
+[![PyPI](https://img.shields.io/badge/pypi-latest-blue)](https://pypi.org/project/dugaire/)
 [![Python](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue)](https://pypi.org/project/dugaire/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Build](https://github.com/tadeugr/dugaire/workflows/build/badge.svg)](https://github.com/tadeugr/dugaire/workflows/build/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/dugaire/badge/?version=latest)](https://dugaire.readthedocs.io/en/latest/?badge=latest)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire?ref=badge_shield)
 
-# Build Docker images with custom packages
+*Examples*
 
 Install `vim` and `curl` using `apt-get`.
 
@@ -113,8 +113,8 @@ Usage: dugaire build [OPTIONS]
 
 Options:
   --from <name:tag>               Base image (used in Dockerfile FROM).
-                                  Example: -f=ubuntu  [default: ubuntu:18.04;
-                                  required]
+                                  Example: --from=ubuntu:20.04  [default:
+                                  ubuntu:18.04; required]
 
   --name <name:tag>               Image name. Example: --name="myimage:0.0.1"
                                   [default: random]
