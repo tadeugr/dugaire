@@ -3,7 +3,7 @@ name: TestPyPI
 on:
   push:
     branches:
-      - develop
+      - none
 
 jobs:
   build:
