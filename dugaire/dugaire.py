@@ -31,7 +31,7 @@ def cli():
 @click.option(
     "--from",
     "from_",
-    help="Base image (used in Dockerfile FROM). Example: -f=ubuntu",
+    help="Base image (used in Dockerfile FROM). Example: --from=ubuntu:20.04",
     metavar="<name:tag>",
     required=True,
     default="ubuntu:18.04",
