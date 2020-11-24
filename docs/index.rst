@@ -6,11 +6,10 @@ dugaire
 
    dugaire
 
-|PyPI| |Python| |Code style: black| |Build| |Documentation Status|
-|FOSSA Status|
+|PyPI| |Python| |Code style: black| |Test| |codecov| |Documentation
+Status| |FOSSA Status|
 
-Build Docker images with custom packages
-========================================
+*Examples*
 
 Install ``vim`` and ``curl`` using ``apt-get``.
 
@@ -125,8 +124,8 @@ Usage
 
    Options:
      --from <name:tag>               Base image (used in Dockerfile FROM).
-                                     Example: -f=ubuntu  [default: ubuntu:18.04;
-                                     required]
+                                     Example: --from=ubuntu:20.04  [default:
+                                     ubuntu:18.04; required]
 
      --name <name:tag>               Image name. Example: --name="myimage:0.0.1"
                                      [default: random]
@@ -348,14 +347,16 @@ FOSSA Live Project report
 The report is available
 `here <https://app.fossa.com/reports/826e35e3-c1be-4f82-a260-da5b362aa83b>`__
 
-.. |PyPI| image:: https://img.shields.io/badge/pypi-0.0.8-blue
+.. |PyPI| image:: https://img.shields.io/badge/pypi-latest-blue
    :target: https://pypi.org/project/dugaire/
 .. |Python| image:: https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue
    :target: https://pypi.org/project/dugaire/
 .. |Code style: black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
-.. |Build| image:: https://github.com/tadeugr/dugaire/workflows/build/badge.svg
+.. |Test| image:: https://github.com/tadeugr/dugaire/workflows/test/badge.svg
    :target: https://github.com/tadeugr/dugaire/workflows/build/badge.svg
+.. |codecov| image:: https://codecov.io/gh/tadeugr/dugaire/branch/develop/graph/badge.svg?token=Q6OURIL1ZK
+   :target: https://codecov.io/gh/tadeugr/dugaire
 .. |Documentation Status| image:: https://readthedocs.org/projects/dugaire/badge/?version=latest
    :target: https://dugaire.readthedocs.io/en/latest/?badge=latest
 .. |FOSSA Status| image:: https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=shield
