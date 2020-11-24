@@ -40,16 +40,7 @@ jobs:
     - name: Build
       run: |
         python setup.py sdist bdist_wheel
-    - name: Publish (testpypi)
-      if: endsWith(github.ref, '-rc')
-      env:
-        TWINE_USERNAME: ${{ secrets.TEST_PYPI_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.TEST_PYPI_PASSWORD }}
-        TWINE_REPOSITORY_URL: "https://test.pypi.org/legacy/" 
-      run: |
-        twine upload dist/*
-    - name: Publish (pypi)
-      if: "!endsWith(github.ref, '-rc')"
+    - name: Publish
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
