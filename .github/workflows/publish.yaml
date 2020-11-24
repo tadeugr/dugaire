@@ -1,4 +1,4 @@
-name: Upload Python Package
+name: publish
 
 on:
   push:
@@ -49,6 +49,7 @@ jobs:
       run: |
         twine upload dist/*
     - name: Publish (pypi)
+      if: "!endsWith(github.ref, '-rc')"
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
