@@ -7,8 +7,11 @@ import sys
 import docker
 import click
 import jinja2
+import json
 import uuid
+import re
 import click_completion
+import urllib.request
 from io import BytesIO
 
 HERE = os.path.dirname(os.path.realpath(__file__))
@@ -59,18 +62,24 @@ def cli():
     required=False,
 )
 @click.option(
-    "--with-kubectl",
-    help="Install kubectl. Examples: --with-kubectl=latest / --with-kubectl=1.17.0",
-    metavar="<latest|1.15.0 (or other)>",
-    required=False,
-)
-@click.option(
     "--with-azurecli",
     "--with-az",
     help='Install Azure CLI. Examples: --with-azurecli=latest / For older versions, use pip3: --apt=python3-pip --pip="azure-cli==2.2.0"',
     metavar="<latest>",
     required=False,
     type=click.Choice(["latest"], case_sensitive=False),
+)
+@click.option(
+    "--with-kubectl",
+    help="Install kubectl. Examples: --with-kubectl=latest / --with-kubectl=1.17.0",
+    metavar="<latest|1.15.0 (or other)>",
+    required=False,
+)
+@click.option(
+    "--with-velero",
+    help="Install velero. Examples: --with-velero=latest / --with-velero=1.17.0",
+    metavar="<latest|1.15.0 (or other)>",
+    required=False,
 )
 @click.option(
     "--force",
@@ -98,7 +107,7 @@ def cli():
         ["image.id", "image.id.short", "image.name", "dockerfile"], case_sensitive=False
     ),
 )
-def build(from_, name, apt, pip3, with_kubectl, with_azurecli, force, dry_run, output):
+def build(from_, name, apt, pip3, with_azurecli, with_kubectl, with_velero, force, dry_run, output):
     """
     Build Docker images with custom packages.
     \n
@@ -148,6 +157,18 @@ def build(from_, name, apt, pip3, with_kubectl, with_azurecli, force, dry_run, o
         dockerfile += template.render(packages=packages)
 
     if with_kubectl:
+        current_option_name = '--with-kubectl'
+        current_option_value = with_kubectl     
+
+        if not util.string_is_latest_or_version(current_option_value):
+            usage_msg = f'{current_option_name}=<latest | semantic versioning>'
+            example_msg = f'{current_option_name}=latest | {current_option_name}=1.17.0'
+
+            exc_msg = f"Bad usage {current_option_name}={current_option_value} \n"
+            exc_msg += f"Valid usage: {usage_msg} \n"
+            exc_msg += f"Examples: {example_msg}"
+            raise click.BadOptionUsage(current_option_name, exc_msg)
+
         dependency_list = {}
         dependency_list = ["curl", "ca-certificates"]
         dependency = " ".join(dependency_list)
@@ -172,6 +193,45 @@ def build(from_, name, apt, pip3, with_kubectl, with_azurecli, force, dry_run, o
 
         template = util.get_template("with_azurecli.j2")
         dockerfile += template.render()
+
+    if with_velero:
+
+        current_option_name = '--with-velero'
+        current_option_value = with_velero        
+
+        if not util.string_is_latest_or_version(current_option_value):
+            usage_msg = f'{current_option_name}=<latest | semantic versioning>'
+            example_msg = f'{current_option_name}=latest | {current_option_name}=1.5.2'
+
+            exc_msg = f"Bad usage {current_option_name}={current_option_value} \n"
+            exc_msg += f"Valid usage: {usage_msg} \n"
+            exc_msg += f"Examples: {example_msg}"
+            raise click.BadOptionUsage(current_option_name, exc_msg)
+
+        if not with_kubectl:
+            usage_msg = f'--with-kubectl=<latest | semantic versioning> {current_option_name}=<latest | semantic versioning>'
+            example_msg = f'--with-kubectl=latest {current_option_name}=latest'
+
+            exc_msg = f"Bad usage {current_option_name} requires --with-kubectl \n"
+            exc_msg += f"Valid usage: {usage_msg} \n"
+            exc_msg += f"Examples: {example_msg}"
+            raise click.BadOptionUsage(current_option_name, exc_msg)
+
+        dependency_list = {}
+        dependency_list = ["wget"]
+        dependency = " ".join(dependency_list)
+
+        apt_template = util.get_template("apt.j2")
+        dockerfile += apt_template.render(packages=dependency)
+
+        if with_velero == 'latest':
+            import urllib.request
+            response = urllib.request.urlopen("https://api.github.com/repos/vmware-tanzu/velero/releases/latest").read()
+            response = json.loads(response)
+            with_velero = response["tag_name"][1:]
+
+        template = util.get_template("with_velero.j2")
+        dockerfile += template.render(version=with_velero)
 
     image_id = None
     image_name = None
