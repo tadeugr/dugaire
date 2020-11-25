@@ -46,3 +46,23 @@ def test_from_ubuntu_20_04_pkg_latest():
     )
 
     assert "Git commit:" in docker_run_output
+
+def test_from_ubuntu_20_04_pkg_version():
+    kubectl_version = '1.17.0'
+    velero_version = '1.5.2'
+    cmd = f"build --from=ubuntu:20.04 --with-kubectl={kubectl_version} --with-velero={velero_version}"
+    image_id = common.cli(cmd)
+    assert len(image_id) == 12
+
+    docker_run_output = common.docker_run(
+        image_id, "kubectl version --client=true --output=json"
+    )
+    docker_run_output = json.loads(docker_run_output)
+
+    f"v{kubectl_version}" == docker_run_output["clientVersion"]["gitVersion"]
+
+    docker_run_output = common.docker_run(
+        image_id, "velero version --client-only"
+    )
+
+    assert f"Version: v{velero_version}" in docker_run_output

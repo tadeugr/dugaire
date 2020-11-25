@@ -140,3 +140,6 @@ cython_debug/
 
 # macos ds_store
 **/.DS_Store
+
+# IDE
+.vscode
