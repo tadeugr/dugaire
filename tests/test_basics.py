@@ -4,6 +4,7 @@
 
 import os
 import sys
+import pytest
 from click.testing import CliRunner
 
 HERE = os.path.dirname(os.path.realpath(__file__))
@@ -95,6 +96,15 @@ def test_build_output_dockerfile():
 
     assert "LABEL builtwith" in output
 
+def test_list_short():
+
+    cmd = f"list --short"
+
+    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
+    output = result.output.strip()
+
+    assert "Image ID:" in output
+    assert "Image tags:" in output
 
 def test_remove_image():
     global _BUILT_IMAGES

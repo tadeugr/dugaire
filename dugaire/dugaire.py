@@ -212,28 +212,23 @@ def build(from_, name, apt, pip3, with_kubectl, with_azurecli, force, dry_run, o
     is_flag=True,
 )
 def list_(short):
-    try:
-        client = docker.from_env()
-        images = client.images.list(filters={"label": [util.get_dugaire_image_label()]})
+    client = docker.from_env()
+    images = client.images.list(filters={"label": [util.get_dugaire_image_label()]})
 
-        if not len(images):
-            click.echo("No images built with dugaire found.")
-            sys.exit(0)
+    if not len(images):
+        click.echo("No images built with dugaire found.")
+        sys.exit(0)
 
-        for image in images:
-            image_id = image.id
-            if short:
-                image_id = image_id.replace("sha256:", "")[:12]
+    for image in images:
+        image_id = image.id
+        if short:
+            image_id = image_id.replace("sha256:", "")[:12]
 
-            click.echo(f"-----------")
-            click.echo(f"Image ID: {image_id}")
-            join_image_tags = " ".join(image.tags)
-            click.echo(f"Image tags: {join_image_tags}")
         click.echo(f"-----------")
-
-    except Exception as e:
-        print(e)
-        sys.exit()
+        click.echo(f"Image ID: {image_id}")
+        join_image_tags = " ".join(image.tags)
+        click.echo(f"Image tags: {join_image_tags}")
+    click.echo(f"-----------")
 
 
 @cli.command(help="Remove images built with dugaire.")
@@ -244,25 +239,20 @@ def list_(short):
     metavar="<Image ID|all>",
 )
 def remove(image):
-    try:
-        client = docker.from_env()
+    client = docker.from_env()
 
-        if image == "all":
-            images = client.images.list(
-                filters={"label": [util.get_dugaire_image_label()]}
-            )
-            for docker_image in images:
-                client.images.remove(image=docker_image.id, force=True)
+    if image == "all":
+        images = client.images.list(
+            filters={"label": [util.get_dugaire_image_label()]}
+        )
+        for docker_image in images:
+            client.images.remove(image=docker_image.id, force=True)
 
-            click.echo("Images removed.")
-            sys.exit(0)
+        click.echo("Images removed.")
+        sys.exit(0)
 
-        client.images.remove(image=image, force=True)
-        click.echo("Image removed.")
-
-    except Exception as e:
-        print(e)
-        sys.exit()
+    client.images.remove(image=image, force=True)
+    click.echo("Image removed.")
 
 
 def patch_click() -> None:
