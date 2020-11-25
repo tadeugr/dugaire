@@ -1,13 +1,16 @@
 dugaire
 =======
 
+Quickly build custom Docker images for local development without having
+to write Dockerfiles.
+
 .. figure:: https://github.com/tadeugr/dugaire/blob/master/docs/assets/tty.gif?raw=true
    :alt: dugaire
 
    dugaire
 
-|PyPI| |Python| |Code style: black| |Test| |codecov| |Documentation
-Status| |FOSSA Status|
+|PyPI| |Python| |Code style: black| |test| |publish| |codecov|
+|Documentation Status| |FOSSA Status|
 
 *Examples*
 
@@ -217,18 +220,18 @@ Support test table
 versions included in the automated tests.*
 
 +----+---------+--------------------------------------------------+----+
-| V  | Base    | Options                                          | St |
-| er | image   |                                                  | at |
-| si |         |                                                  | us |
-| on |         |                                                  |    |
+| Ve | Base    | Options                                          | St |
+| rs | image   |                                                  | at |
+| io |         |                                                  | us |
+| n  |         |                                                  |    |
 +====+=========+==================================================+====+
-| la | ``      | ``dugaire build --with-azurecli=latest``         | PA |
-| te | ubuntu: |                                                  | SS |
-| st | 20.04`` |                                                  | ED |
+| la | ``ubunt | ``dugaire build --with-azurecli=latest``         | PA |
+| te | u:20.04 |                                                  | SS |
+| st | ``      |                                                  | ED |
 +----+---------+--------------------------------------------------+----+
-| 2. | ``      | ``dugaire build --from=ubuntu:20.0               | PA |
-| 14 | ubuntu: | 4 --apt=python3-pip --pip3="azure-cli==2.14.2"`` | SS |
-| .2 | 20.04`` |                                                  | ED |
+| 2. | ``ubunt | ``dugaire build --from=ubuntu:20.04 --apt=python | PA |
+| 14 | u:20.04 | 3-pip --pip3="azure-cli==2.14.2"``               | SS |
+| .2 | ``      |                                                  | ED |
 +----+---------+--------------------------------------------------+----+
 
 kubectl
@@ -252,24 +255,24 @@ Support test table
 versions included in the automated tests.*
 
 +-----+-----------+---------------------------------------------+-----+
-| V   | Base      | Options                                     | Sta |
-| ers | image     |                                             | tus |
-| ion |           |                                             |     |
+| Ver | Base      | Options                                     | Sta |
+| sio | image     |                                             | tus |
+| n   |           |                                             |     |
 +=====+===========+=============================================+=====+
-| lat | ``ubunt   | ``dugaire build                             | PAS |
-| est | u:20.04`` | --from=ubuntu:20.04 --with-kubectl=latest`` | SED |
+| lat | ``ubuntu: | ``dugaire build --from=ubuntu:20.04 --with- | PAS |
+| est | 20.04``   | kubectl=latest``                            | SED |
 +-----+-----------+---------------------------------------------+-----+
-| 1.1 | ``ubunt   | ``dugaire build -                           | PAS |
-| 8.0 | u:20.04`` | -from=ubuntu:20.04 --with-kubectl=1.18.0"`` | SED |
+| 1.1 | ``ubuntu: | ``dugaire build --from=ubuntu:20.04 --with- | PAS |
+| 8.0 | 20.04``   | kubectl=1.18.0"``                           | SED |
 +-----+-----------+---------------------------------------------+-----+
-| 1.1 | ``ubunt   | ``dugaire build -                           | PAS |
-| 7.0 | u:20.04`` | -from=ubuntu:20.04 --with-kubectl=1.17.0"`` | SED |
+| 1.1 | ``ubuntu: | ``dugaire build --from=ubuntu:20.04 --with- | PAS |
+| 7.0 | 20.04``   | kubectl=1.17.0"``                           | SED |
 +-----+-----------+---------------------------------------------+-----+
-| 1.1 | ``ubunt   | ``dugaire build -                           | PAS |
-| 6.0 | u:18.04`` | -from=ubuntu:18.04 --with-kubectl=1.16.0"`` | SED |
+| 1.1 | ``ubuntu: | ``dugaire build --from=ubuntu:18.04 --with- | PAS |
+| 6.0 | 18.04``   | kubectl=1.16.0"``                           | SED |
 +-----+-----------+---------------------------------------------+-----+
-| 1.1 | ``ubunt   | ``dugaire build -                           | PAS |
-| 5.0 | u:18.04`` | -from=ubuntu:18.04 --with-kubectl=1.15.0"`` | SED |
+| 1.1 | ``ubuntu: | ``dugaire build --from=ubuntu:18.04 --with- | PAS |
+| 5.0 | 18.04``   | kubectl=1.15.0"``                           | SED |
 +-----+-----------+---------------------------------------------+-----+
 
 Useful Docker commands
@@ -339,7 +342,7 @@ more. <https://github.com/tadeugr/dugaire/blob/master/LICENSE>`__
 FOSSA scan overview
 -------------------
 
-|image1|
+|FOSSA Status|
 
 FOSSA Live Project report
 -------------------------
@@ -353,13 +356,15 @@ The report is available
    :target: https://pypi.org/project/dugaire/
 .. |Code style: black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
-.. |Test| image:: https://github.com/tadeugr/dugaire/workflows/test/badge.svg
-   :target: https://github.com/tadeugr/dugaire/workflows/build/badge.svg
+.. |test| image:: https://github.com/tadeugr/dugaire/workflows/test/badge.svg?branch=master
+   :target: https://github.com/tadeugr/dugaire/actions?query=workflow%3Atest
+.. |publish| image:: https://github.com/tadeugr/dugaire/workflows/publish/badge.svg
+   :target: https://github.com/tadeugr/dugaire/actions?query=workflow%3Apublish
 .. |codecov| image:: https://codecov.io/gh/tadeugr/dugaire/branch/develop/graph/badge.svg?token=Q6OURIL1ZK
    :target: https://codecov.io/gh/tadeugr/dugaire
 .. |Documentation Status| image:: https://readthedocs.org/projects/dugaire/badge/?version=latest
    :target: https://dugaire.readthedocs.io/en/latest/?badge=latest
 .. |FOSSA Status| image:: https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=shield
    :target: https://app.fossa.com/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire?ref=badge_shield
-.. |image1| image:: https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=large
+.. |FOSSA Status| image:: https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=large
    :target: https://app.fossa.com/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire?ref=badge_large

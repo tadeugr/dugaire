@@ -25,3 +25,7 @@ readthedocs:
 
 docker-rm:
 	docker rmi -f $(docker images -aq -f label='builtwith=dugaire')
+
+pre-commit:
+	black .
+	make readthedocs

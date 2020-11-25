@@ -16,6 +16,7 @@ import info
 
 _BUILT_IMAGES = []
 
+
 def test_help():
 
     cmd = ""
@@ -40,6 +41,7 @@ def test_version():
 
     assert f"{info_prog_name}, version {info_version}" == output
 
+
 def test_build_default():
     global _BUILT_IMAGES
 
@@ -52,6 +54,7 @@ def test_build_default():
     assert 12 == len(output)
 
     _BUILT_IMAGES.append(output)
+
 
 def test_build_output_image_id():
     global _BUILT_IMAGES
@@ -66,6 +69,7 @@ def test_build_output_image_id():
 
     _BUILT_IMAGES.append(output)
 
+
 def test_build_output_image_name():
     global _BUILT_IMAGES
 
@@ -79,6 +83,7 @@ def test_build_output_image_name():
 
     _BUILT_IMAGES.append(output)
 
+
 def test_build_output_dockerfile():
     global _BUILT_IMAGES
 
@@ -90,27 +95,30 @@ def test_build_output_dockerfile():
 
     assert "LABEL builtwith" in output
 
+
 def test_remove_image():
     global _BUILT_IMAGES
 
     cmd = ""
-    cmd += f'remove --image={_BUILT_IMAGES[0]}'
+    cmd += f"remove --image={_BUILT_IMAGES[0]}"
 
     result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
     output = result.output.strip()
 
     assert "Image removed." == output
 
+
 def test_remove_all():
     global _BUILT_IMAGES
 
     cmd = ""
-    cmd += f'remove --image=all'
+    cmd += f"remove --image=all"
 
     result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
     output = result.output.strip()
 
     assert "Images removed." == output
+
 
 def test_list_no_image():
 
