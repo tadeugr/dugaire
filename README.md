@@ -5,7 +5,7 @@
 [![PyPI](https://img.shields.io/badge/pypi-latest-blue)](https://pypi.org/project/dugaire/)
 [![Python](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue)](https://pypi.org/project/dugaire/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Test](https://github.com/tadeugr/dugaire/workflows/test/badge.svg)](https://github.com/tadeugr/dugaire/workflows/build/badge.svg)
+[![Test](https://github.com/tadeugr/dugaire/workflows/test/badge.svg)](https://github.com/tadeugr/dugaire/workflows/test/badge.svg)
 [![codecov](https://codecov.io/gh/tadeugr/dugaire/branch/develop/graph/badge.svg?token=Q6OURIL1ZK)](https://codecov.io/gh/tadeugr/dugaire)
 [![Documentation Status](https://readthedocs.org/projects/dugaire/badge/?version=latest)](https://dugaire.readthedocs.io/en/latest/?badge=latest)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire?ref=badge_shield)
