@@ -1,5 +1,5 @@
 def get_version():
-    return "0.0.10"
+    return "0.0.11"
 
 
 def get_prog_name():
