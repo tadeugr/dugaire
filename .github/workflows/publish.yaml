@@ -20,8 +20,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: |
-            Changes in this Release
+          body_path: ${{env.working-directory}}/CHANGELOG.txt
           draft: false
           prerelease: false
   deploy:
@@ -41,6 +40,7 @@ jobs:
       run: |
         python setup.py sdist bdist_wheel
     - name: Publish
+      if: "!endsWith(github.ref, '-rc')"
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
