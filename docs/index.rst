@@ -143,15 +143,19 @@ Usage
                                      WARNING: requires -apt=python3-pip. Example:
                                      -apt=python3-pip -pip3=ansible,jinja2
 
-     --with-kubectl <latest|1.15.0 (or other)>
-                                     Install kubectl. Examples: --with-
-                                     kubectl=latest / --with-kubectl=1.17.0
-
      --with-azurecli, --with-az <latest>
                                      Install Azure CLI. Examples: --with-
                                      azurecli=latest / For older versions, use
                                      pip3: --apt=python3-pip --pip="azure-
                                      cli==2.2.0"
+
+     --with-kubectl <latest|semantic versioning>
+                                     Install kubectl. Examples: --with-
+                                     kubectl=latest / --with-kubectl=1.17.0
+
+     --with-velero <latest|semantic versioning>
+                                     Install velero. Examples: --with-
+                                     velero=latest / --with-velero=1.5.2
 
      --force                         Ignore Docker cache and build from scratch.
                                      [default: False]
@@ -169,11 +173,11 @@ Supported features
 Base images
 -----------
 
-====== ==================================================
+====== =================================
 Distro Tested with
-====== ==================================================
-ubuntu ``ubuntu:16.04`` ``ubuntu:18.04`` ``ubuntu:20.04``
-====== ==================================================
+====== =================================
+ubuntu ``ubuntu:18.04`` ``ubuntu:20.04``
+====== =================================
 
 *You may use base images that were built from the tested images.*
 
@@ -200,10 +204,19 @@ blank space) list of packages you want to install. Example:
 Applications
 ------------
 
-Azure CLI
+azure-cli
 ~~~~~~~~~
 
 Install Azure Command Line Interface.
+
+Requirements
+^^^^^^^^^^^^
+
+To install specific versions (not *latest*), use ``pip3`` as follows
+``--apt=python3-pip --pip3="azure-cli==<semantic versioning>"``
+
+Options
+^^^^^^^
 
 ``--with-azurecli=latest`` to install the latest version.
 
@@ -213,31 +226,33 @@ specific versions.
 See all versions available
 `here <https://github.com/Azure/azure-cli/releases>`__.
 
-Support test table
-^^^^^^^^^^^^^^^^^^
+Covered by automated tests
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-*You may install any version available. The table bellow only describes
-versions included in the automated tests.*
+*You may install any version available. The commands bellow only
+describes versions included in the automated testsß.*
 
-+----+---------+--------------------------------------------------+----+
-| Ve | Base    | Options                                          | St |
-| rs | image   |                                                  | at |
-| io |         |                                                  | us |
-| n  |         |                                                  |    |
-+====+=========+==================================================+====+
-| la | ``ubunt | ``dugaire build --with-azurecli=latest``         | PA |
-| te | u:20.04 |                                                  | SS |
-| st | ``      |                                                  | ED |
-+----+---------+--------------------------------------------------+----+
-| 2. | ``ubunt | ``dugaire build --from=ubuntu:20.04 --apt=python | PA |
-| 14 | u:20.04 | 3-pip --pip3="azure-cli==2.14.2"``               | SS |
-| .2 | ``      |                                                  | ED |
-+----+---------+--------------------------------------------------+----+
+::
+
+   dugaire build --with-azurecli=latest
+   dugaire build --from=ubuntu:20.04 --apt=python3-pip --pip3="azure-cli==2.14.2"
 
 kubectl
 ~~~~~~~
 
 Install kubectl.
+
+.. _requirements-1:
+
+Requirements
+^^^^^^^^^^^^
+
+No requirements.
+
+.. _options-1:
+
+Options
+^^^^^^^
 
 ``--with-kubectl=latest`` to install the latest version.
 
@@ -246,34 +261,58 @@ Install kubectl.
 See all versions available
 `here <https://github.com/kubernetes/kubectl/releases>`__.
 
-.. _support-test-table-1:
+.. _covered-by-automated-tests-1:
 
-Support test table
-^^^^^^^^^^^^^^^^^^
+Covered by automated tests
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-*You may install any version available. The table bellow only describes
-versions included in the automated tests.*
+*You may install any version available. The commands bellow only
+describes versions included in the automated testsß.*
 
-+-----+-----------+---------------------------------------------+-----+
-| Ver | Base      | Options                                     | Sta |
-| sio | image     |                                             | tus |
-| n   |           |                                             |     |
-+=====+===========+=============================================+=====+
-| lat | ``ubuntu: | ``dugaire build --from=ubuntu:20.04 --with- | PAS |
-| est | 20.04``   | kubectl=latest``                            | SED |
-+-----+-----------+---------------------------------------------+-----+
-| 1.1 | ``ubuntu: | ``dugaire build --from=ubuntu:20.04 --with- | PAS |
-| 8.0 | 20.04``   | kubectl=1.18.0"``                           | SED |
-+-----+-----------+---------------------------------------------+-----+
-| 1.1 | ``ubuntu: | ``dugaire build --from=ubuntu:20.04 --with- | PAS |
-| 7.0 | 20.04``   | kubectl=1.17.0"``                           | SED |
-+-----+-----------+---------------------------------------------+-----+
-| 1.1 | ``ubuntu: | ``dugaire build --from=ubuntu:18.04 --with- | PAS |
-| 6.0 | 18.04``   | kubectl=1.16.0"``                           | SED |
-+-----+-----------+---------------------------------------------+-----+
-| 1.1 | ``ubuntu: | ``dugaire build --from=ubuntu:18.04 --with- | PAS |
-| 5.0 | 18.04``   | kubectl=1.15.0"``                           | SED |
-+-----+-----------+---------------------------------------------+-----+
+::
+
+   dugaire build --from=ubuntu:20.04 --with-kubectl=latest
+   dugaire build --from=ubuntu:20.04 --with-kubectl=1.18.0
+   dugaire build --from=ubuntu:20.04 --with-kubectl=1.17.0
+   dugaire build --from=ubuntu:18.04 --with-kubectl=1.16.0
+   dugaire build --from=ubuntu:18.04 --with-kubectl=1.15.0
+
+velero
+~~~~~~
+
+Install velero.
+
+.. _requirements-2:
+
+Requirements
+^^^^^^^^^^^^
+
+``--with-velero`` requires ``--with-kubectl``.
+
+.. _options-2:
+
+Options
+^^^^^^^
+
+``--with-velero=latest`` to install the latest version.
+
+``--with-velero=1.5.2`` *(example)* to install specific versions.
+
+See all versions available
+`here <https://github.com/vmware-tanzu/velero/releases>`__.
+
+.. _covered-by-automated-tests-2:
+
+Covered by automated tests
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*You may install any version available. The commands bellow only
+describes versions included in the automated testsß.*
+
+::
+
+   dugaire build --from=ubuntu:20.04 --with-kubectl=latest --with-velero=latest
+   dugaire build --from=ubuntu:20.04 --with-kubectl=1.17.0 --with-velero=1.5.2
 
 Useful Docker commands
 ======================
@@ -342,7 +381,7 @@ more. <https://github.com/tadeugr/dugaire/blob/master/LICENSE>`__
 FOSSA scan overview
 -------------------
 
-|FOSSA Status|
+|image1|
 
 FOSSA Live Project report
 -------------------------
@@ -366,5 +405,5 @@ The report is available
    :target: https://dugaire.readthedocs.io/en/latest/?badge=latest
 .. |FOSSA Status| image:: https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=shield
    :target: https://app.fossa.com/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire?ref=badge_shield
-.. |FOSSA Status| image:: https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=large
+.. |image1| image:: https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire.svg?type=large
    :target: https://app.fossa.com/projects/git%2Bgithub.com%2Ftadeugr%2Fdugaire?ref=badge_large

@@ -20,6 +20,9 @@ binary:
 	cd dugaire
 	pyinstaller --clean -y --name=dugaire --add-data="templates\base.j2;templates" dugaire.py
 
+readme:
+	python3 docs/make_readme.py > README.md
+
 readthedocs:
 	pandoc README.md --from markdown --to rst -s -o docs/index.rst
 
@@ -28,4 +31,5 @@ docker-rm:
 
 pre-commit:
 	black .
+	make readme
 	make readthedocs

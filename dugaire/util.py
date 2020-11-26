@@ -5,18 +5,28 @@
 import os
 import sys
 import jinja2
+import re
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, f"{HERE}")
 
 
-def get_template(file_name):
+def string_is_latest_or_version(check_string):
+    prog = re.compile("^(\d+\.)?(\d+\.)?(\*|\d+)$")
+    result = prog.match(check_string)
+
+    if check_string != "latest" and not result:
+        return False
+
+    return True
+
+
+def get_template(file_name, searchpath=f"{HERE}/templates"):
     """ Load and return a Jinja template file. """
 
-    templateLoader = jinja2.FileSystemLoader(searchpath=f"{HERE}/templates")
+    templateLoader = jinja2.FileSystemLoader(searchpath=searchpath)
     templateEnv = jinja2.Environment(loader=templateLoader)
-    TEMPLATE_FILE = file_name
-    template = templateEnv.get_template(TEMPLATE_FILE)
+    template = templateEnv.get_template(file_name)
     return template
 
 

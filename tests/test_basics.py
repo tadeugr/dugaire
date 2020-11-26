@@ -13,6 +13,7 @@ sys.path.insert(1, f"{HERE}/../dugaire")
 
 import dugaire
 import info
+import common
 
 _BUILT_IMAGES = []
 
@@ -22,10 +23,9 @@ def test_help():
     cmd = ""
     cmd += "--help"
 
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
+    result = common.cli(cmd)
 
-    assert f"Usage: cli [OPTIONS] COMMAND [ARGS]" in output
+    assert f"Usage: cli [OPTIONS] COMMAND [ARGS]" in result
 
 
 def test_version():
@@ -33,13 +33,12 @@ def test_version():
     cmd = ""
     cmd += "--version"
 
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
+    result = common.cli(cmd)
 
     info_version = info.get_version()
     info_prog_name = info.get_prog_name()
 
-    assert f"{info_prog_name}, version {info_version}" == output
+    assert f"{info_prog_name}, version {info_version}" == result
 
 
 def test_build_default():
@@ -48,12 +47,11 @@ def test_build_default():
     cmd = ""
     cmd += "build"
 
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
+    result = common.cli(cmd)
 
-    assert 12 == len(output)
+    assert 12 == len(result)
 
-    _BUILT_IMAGES.append(output)
+    _BUILT_IMAGES.append(result)
 
 
 def test_build_output_image_id():
@@ -62,12 +60,11 @@ def test_build_output_image_id():
     cmd = ""
     cmd += "build --output=image.id"
 
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
+    result = common.cli(cmd)
 
-    assert 71 == len(output)
+    assert 71 == len(result)
 
-    _BUILT_IMAGES.append(output)
+    _BUILT_IMAGES.append(result)
 
 
 def test_build_output_image_name():
@@ -76,12 +73,11 @@ def test_build_output_image_name():
     cmd = ""
     cmd += "build --output=image.name"
 
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
+    result = common.cli(cmd)
 
-    assert 21 == len(output)
+    assert 21 == len(result)
 
-    _BUILT_IMAGES.append(output)
+    _BUILT_IMAGES.append(result)
 
 
 def test_build_output_dockerfile():
@@ -90,10 +86,19 @@ def test_build_output_dockerfile():
     cmd = ""
     cmd += "build --output=dockerfile --dry-run"
 
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
+    result = common.cli(cmd)
 
-    assert "LABEL builtwith" in output
+    assert "LABEL builtwith" in result
+
+
+def test_list_short():
+
+    cmd = f"list --short"
+
+    result = common.cli(cmd)
+
+    assert "Image ID:" in result
+    assert "Image tags:" in result
 
 
 def test_remove_image():
@@ -102,10 +107,9 @@ def test_remove_image():
     cmd = ""
     cmd += f"remove --image={_BUILT_IMAGES[0]}"
 
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
+    result = common.cli(cmd)
 
-    assert "Image removed." == output
+    assert "Image removed." == result
 
 
 def test_remove_all():
@@ -114,17 +118,15 @@ def test_remove_all():
     cmd = ""
     cmd += f"remove --image=all"
 
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
+    result = common.cli(cmd)
 
-    assert "Images removed." == output
+    assert "Images removed." == result
 
 
 def test_list_no_image():
 
     cmd = f"list"
 
-    result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
-    output = result.output.strip()
+    result = common.cli(cmd)
 
-    assert "No images built with dugaire found." == output
+    assert "No images built with dugaire found." == result
