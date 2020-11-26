@@ -17,11 +17,13 @@ import dugaire
 import info
 import common
 
+
 def test_from_ubuntu_20_04_bad_usage():
     invalid_option = "THIS.IS.INVALID"
     cmd = f"build --from=ubuntu:20.04 --with-kubectl={invalid_option}"
     result = common.cli(cmd)
-    assert f'Bad usage --with-kubectl={invalid_option}' in result
+    assert f"Bad usage --with-kubectl={invalid_option}" in result
+
 
 def test_from_ubuntu_20_04_pkg_latest():
     cmd = f"build --from=ubuntu:20.04 --with-kubectl=latest"

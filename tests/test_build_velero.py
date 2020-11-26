@@ -22,12 +22,14 @@ def test_from_ubuntu_20_04_bad_usage():
     invalid_option = "THIS.IS.INVALID"
     cmd = f"build --from=ubuntu:20.04 --with-velero={invalid_option}"
     result = common.cli(cmd)
-    assert f'Bad usage --with-velero={invalid_option}' in result
+    assert f"Bad usage --with-velero={invalid_option}" in result
+
 
 def test_from_ubuntu_20_04_no_kubectl():
     cmd = f"build --from=ubuntu:20.04 --with-velero=1.5.2"
     result = common.cli(cmd)
-    assert 'Bad usage --with-velero requires --with-kubectl' in result
+    assert "Bad usage --with-velero requires --with-kubectl" in result
+
 
 def test_from_ubuntu_20_04_pkg_latest():
     cmd = f"build --from=ubuntu:20.04 --with-kubectl=latest --with-velero=latest"
@@ -41,15 +43,14 @@ def test_from_ubuntu_20_04_pkg_latest():
 
     assert "gitVersion" in docker_run_output["clientVersion"]
 
-    docker_run_output = common.docker_run(
-        image_id, "velero version --client-only"
-    )
+    docker_run_output = common.docker_run(image_id, "velero version --client-only")
 
     assert "Git commit:" in docker_run_output
 
+
 def test_from_ubuntu_20_04_pkg_version():
-    kubectl_version = '1.17.0'
-    velero_version = '1.5.2'
+    kubectl_version = "1.17.0"
+    velero_version = "1.5.2"
     cmd = f"build --from=ubuntu:20.04 --with-kubectl={kubectl_version} --with-velero={velero_version}"
     image_id = common.cli(cmd)
     assert len(image_id) == 12
@@ -61,8 +62,6 @@ def test_from_ubuntu_20_04_pkg_version():
 
     f"v{kubectl_version}" == docker_run_output["clientVersion"]["gitVersion"]
 
-    docker_run_output = common.docker_run(
-        image_id, "velero version --client-only"
-    )
+    docker_run_output = common.docker_run(image_id, "velero version --client-only")
 
     assert f"Version: v{velero_version}" in docker_run_output

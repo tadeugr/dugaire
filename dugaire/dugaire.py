@@ -77,7 +77,7 @@ def cli():
 )
 @click.option(
     "--with-velero",
-    help="Install velero. Examples: --with-velero=latest / --with-velero=1.17.0",
+    help="Install velero. Examples: --with-velero=latest / --with-velero=1.5.2",
     metavar="<latest|1.15.0 (or other)>",
     required=False,
 )
@@ -107,7 +107,18 @@ def cli():
         ["image.id", "image.id.short", "image.name", "dockerfile"], case_sensitive=False
     ),
 )
-def build(from_, name, apt, pip3, with_azurecli, with_kubectl, with_velero, force, dry_run, output):
+def build(
+    from_,
+    name,
+    apt,
+    pip3,
+    with_azurecli,
+    with_kubectl,
+    with_velero,
+    force,
+    dry_run,
+    output,
+):
     """
     Build Docker images with custom packages.
     \n
@@ -157,12 +168,12 @@ def build(from_, name, apt, pip3, with_azurecli, with_kubectl, with_velero, forc
         dockerfile += template.render(packages=packages)
 
     if with_kubectl:
-        current_option_name = '--with-kubectl'
-        current_option_value = with_kubectl     
+        current_option_name = "--with-kubectl"
+        current_option_value = with_kubectl
 
         if not util.string_is_latest_or_version(current_option_value):
-            usage_msg = f'{current_option_name}=<latest | semantic versioning>'
-            example_msg = f'{current_option_name}=latest | {current_option_name}=1.17.0'
+            usage_msg = f"{current_option_name}=<latest | semantic versioning>"
+            example_msg = f"{current_option_name}=latest | {current_option_name}=1.17.0"
 
             exc_msg = f"Bad usage {current_option_name}={current_option_value} \n"
             exc_msg += f"Valid usage: {usage_msg} \n"
@@ -196,12 +207,12 @@ def build(from_, name, apt, pip3, with_azurecli, with_kubectl, with_velero, forc
 
     if with_velero:
 
-        current_option_name = '--with-velero'
-        current_option_value = with_velero        
+        current_option_name = "--with-velero"
+        current_option_value = with_velero
 
         if not util.string_is_latest_or_version(current_option_value):
-            usage_msg = f'{current_option_name}=<latest | semantic versioning>'
-            example_msg = f'{current_option_name}=latest | {current_option_name}=1.5.2'
+            usage_msg = f"{current_option_name}=<latest | semantic versioning>"
+            example_msg = f"{current_option_name}=latest | {current_option_name}=1.5.2"
 
             exc_msg = f"Bad usage {current_option_name}={current_option_value} \n"
             exc_msg += f"Valid usage: {usage_msg} \n"
@@ -209,8 +220,8 @@ def build(from_, name, apt, pip3, with_azurecli, with_kubectl, with_velero, forc
             raise click.BadOptionUsage(current_option_name, exc_msg)
 
         if not with_kubectl:
-            usage_msg = f'--with-kubectl=<latest | semantic versioning> {current_option_name}=<latest | semantic versioning>'
-            example_msg = f'--with-kubectl=latest {current_option_name}=latest'
+            usage_msg = f"--with-kubectl=<latest | semantic versioning> {current_option_name}=<latest | semantic versioning>"
+            example_msg = f"--with-kubectl=latest {current_option_name}=latest"
 
             exc_msg = f"Bad usage {current_option_name} requires --with-kubectl \n"
             exc_msg += f"Valid usage: {usage_msg} \n"
@@ -224,9 +235,12 @@ def build(from_, name, apt, pip3, with_azurecli, with_kubectl, with_velero, forc
         apt_template = util.get_template("apt.j2")
         dockerfile += apt_template.render(packages=dependency)
 
-        if with_velero == 'latest':
+        if with_velero == "latest":
             import urllib.request
-            response = urllib.request.urlopen("https://api.github.com/repos/vmware-tanzu/velero/releases/latest").read()
+
+            response = urllib.request.urlopen(
+                "https://api.github.com/repos/vmware-tanzu/velero/releases/latest"
+            ).read()
             response = json.loads(response)
             with_velero = response["tag_name"][1:]
 
@@ -302,9 +316,7 @@ def remove(image):
     client = docker.from_env()
 
     if image == "all":
-        images = client.images.list(
-            filters={"label": [util.get_dugaire_image_label()]}
-        )
+        images = client.images.list(filters={"label": [util.get_dugaire_image_label()]})
         for docker_image in images:
             client.images.remove(image=docker_image.id, force=True)
 

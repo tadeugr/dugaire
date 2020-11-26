@@ -17,6 +17,7 @@ import dugaire
 import info
 import common
 
+
 def cli(cmd):
     result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
     result = result.output.strip()

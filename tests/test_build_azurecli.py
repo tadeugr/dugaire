@@ -17,6 +17,7 @@ import dugaire
 import info
 import common
 
+
 def test_from_ubuntu20_04_pkg_latest():
 
     from_ = "ubuntu:20.04"

@@ -90,6 +90,7 @@ def test_build_output_dockerfile():
 
     assert "LABEL builtwith" in result
 
+
 def test_list_short():
 
     cmd = f"list --short"
@@ -98,6 +99,7 @@ def test_list_short():
 
     assert "Image ID:" in result
     assert "Image tags:" in result
+
 
 def test_remove_image():
     global _BUILT_IMAGES
