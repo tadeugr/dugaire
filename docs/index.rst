@@ -149,11 +149,11 @@ Usage
                                      pip3: --apt=python3-pip --pip="azure-
                                      cli==2.2.0"
 
-     --with-kubectl <latest|1.15.0 (or other)>
+     --with-kubectl <latest|semantic versioning>
                                      Install kubectl. Examples: --with-
                                      kubectl=latest / --with-kubectl=1.17.0
 
-     --with-velero <latest|1.15.0 (or other)>
+     --with-velero <latest|semantic versioning>
                                      Install velero. Examples: --with-
                                      velero=latest / --with-velero=1.5.2
 

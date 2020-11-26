@@ -72,13 +72,13 @@ def cli():
 @click.option(
     "--with-kubectl",
     help="Install kubectl. Examples: --with-kubectl=latest / --with-kubectl=1.17.0",
-    metavar="<latest|1.15.0 (or other)>",
+    metavar="<latest|semantic versioning>",
     required=False,
 )
 @click.option(
     "--with-velero",
     help="Install velero. Examples: --with-velero=latest / --with-velero=1.5.2",
-    metavar="<latest|1.15.0 (or other)>",
+    metavar="<latest|semantic versioning>",
     required=False,
 )
 @click.option(
