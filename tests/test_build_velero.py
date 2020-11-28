@@ -16,7 +16,8 @@ sys.path.insert(0, f"{HERE}")
 import helper
 
 sys.path.insert(1, f"{HERE}/../dugaire")
-from common import module as common
+import dugaire
+import info
 
 
 def test_from_ubuntu_20_04_bad_usage():

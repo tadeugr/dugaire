@@ -31,17 +31,6 @@ class Azurecli:
 
         self.dependencies = {"apt": ["curl", "ca-certificates"]}
 
-    def get_click_option(self):
-
-        option = click.Option(
-            [self.option],
-            help=self.help_msg,
-            required=False,
-            type=click.Choice(self.choices, case_sensitive=False)
-        )
-
-        return option
-
     def get_dockerfile(self, stack: List):
 
         dependency_list = {}

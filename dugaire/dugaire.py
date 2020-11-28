@@ -25,7 +25,6 @@ import info
 from common import module as common
 from addons import module as addons
 
-
 @click.group()
 @click.pass_context
 @click.version_option(info.get_version(), prog_name=info.get_prog_name())
@@ -56,14 +55,33 @@ def cli(ctx):
 )
 @click.option(
     "--apt",
-    help="Comma separeted list of packages (no blank space) to install using apt-get install. Requires a base image with apt-get. Example: -apt=curl,vim",
+    help="Comma separeted list of packages (no blank space) to install using apt-get install. Requires a base image with apt-get. Example: --apt=curl,vim",
     metavar="<pkg01|pkg01,pkg02>",
     required=False,
 )
 @click.option(
     "--pip3",
-    help="Comma separeted list of packages (no blank space) to install using pip3 install. WARNING: requires -apt=python3-pip. Example: -apt=python3-pip -pip3=ansible,jinja2",
+    help="Comma separeted list of packages (no blank space) to install using pip3 install. Example: --pip3=ansible,jinja2==2.11.2",
     metavar="<pkg01|pkg01,pkg02>",
+    required=False,
+)
+@click.option(
+    "--with-azurecli",
+    help='Install Azure CLI. Examples: --with-azurecli=latest / For older versions, use pip3: --pip3="azure-cli==2.2.0"',
+    metavar="latest",
+    required=False,
+    type=click.Choice(["latest"], case_sensitive=False),
+)
+@click.option(
+    "--with-kubectl",
+    help="Install kubectl. Examples: --with-kubectl=latest / --with-kubectl=1.17.0",
+    metavar="<latest|semantic versioning>",
+    required=False,
+)
+@click.option(
+    "--with-velero",
+    help="Install velero. Examples: --with-velero=latest / --with-velero=1.5.2",
+    metavar="<latest|semantic versioning>",
     required=False,
 )
 @click.option(
@@ -135,24 +153,13 @@ def build(
 
     if apt:
         packages = apt.replace(",", " ")
-        template = util.get_template("apt.j2")
+        template = common.util.get_template(f"{HERE}/templates", "apt.j2")
         dockerfile += template.render(packages=packages)
 
     if pip3:
-        dependency_list = {}
-        dependency_list["azure-cli"] = ["gcc", "python3-dev"]
-
-        pip3_install = pip3.split(",")
-        for package in pip3_install:
-            package_name = package.split("==")[0]
-            if package_name in dependency_list:
-                dependency = " ".join(dependency_list[package_name])
-                apt_template = util.get_template("apt.j2")
-                dockerfile += apt_template.render(packages=dependency)
-
-        packages = " ".join(pip3_install)
-        template = util.get_template("pip3.j2")
-        dockerfile += template.render(packages=packages)
+        addon = addons.pip3.Pip3(ctx)
+        addon_dockerfile, stack = addon.get_dockerfile(stack)
+        dockerfile += addon_dockerfile
 
     if with_kubectl:
         addon = addons.kubectl.Kubectl(ctx)
@@ -214,7 +221,7 @@ def build(
 )
 def list_(short):
     client = docker.from_env()
-    images = client.images.list(filters={"label": [util.get_dugaire_image_label()]})
+    images = client.images.list(filters={"label": [common.util.get_dugaire_image_label()]})
 
     if not len(images):
         click.echo("No images built with dugaire found.")
@@ -233,22 +240,23 @@ def list_(short):
 
 
 @cli.command(help="Remove images built with dugaire.")
+@click.pass_context
 @click.option(
     "--image",
     help="Comma separated list of Image IDs.",
     required=True,
     metavar="<Image ID|all>",
 )
-def remove(image):
+def remove(ctx, image):
     client = docker.from_env()
 
     if image == "all":
-        images = client.images.list(filters={"label": [util.get_dugaire_image_label()]})
+        images = client.images.list(filters={"label": [common.util.get_dugaire_image_label()]})
         for docker_image in images:
             client.images.remove(image=docker_image.id, force=True)
 
         click.echo("Images removed.")
-        sys.exit(0)
+        ctx.exit(0)
 
     client.images.remove(image=image, force=True)
     click.echo("Image removed.")
@@ -271,16 +279,6 @@ def main():
     """Main function executed by the CLI command."""
     patch_click()
     click_completion.init()
-
-    addon = addons.azurecli.Azurecli()
-    build.params.append(addon.get_click_option())
-
-    addon = addons.kubectl.Kubectl()
-    build.params.append(addon.get_click_option())
-
-    addon = addons.velero.Velero()
-    build.params.append(addon.get_click_option())
-
     cli()
 
 

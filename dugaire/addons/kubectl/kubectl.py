@@ -28,17 +28,6 @@ class Kubectl:
 
         self.dependencies = {"apt": ["curl", "ca-certificates"]}
 
-    def get_click_option(self):
-
-        option = click.Option(
-            [self.option],
-            help=self.help_msg,
-            metavar=self.metavar,
-            required=False,
-        )
-
-        return option
-
     def validate_option(self):
 
         if not common.util.is_latest_or_version(self.option_value):

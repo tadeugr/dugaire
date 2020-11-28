@@ -13,16 +13,6 @@ from common import module as common
 
 class Velero:
 
-    name: str
-    option: str
-    option_value: str
-    parameter: str
-    help_msg: str
-    metavar: str
-    is_required: bool
-    click_ctx: None
-    dependencies: List
-
     def __init__(self, click_ctx=None):
 
         self.name = "velero"
@@ -39,17 +29,6 @@ class Velero:
             self.option_value = self.click_ctx.params[self.parameter]
 
         self.dependencies = {"apt": ["wget"]}
-
-    def get_click_option(self):
-
-        option = click.Option(
-            [self.option],
-            help=self.help_msg,
-            metavar=self.metavar,
-            required=False,
-        )
-
-        return option
 
     def validate_option(self):
 
