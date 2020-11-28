@@ -20,17 +20,21 @@ sys.path.insert(0, f"{HERE}")
 """ Import custom modules. """
 
 import info
-import util
+#import util
+from common import module as common
+from addons import module as addons
 
 
 @click.group()
+@click.pass_context
 @click.version_option(info.get_version(), prog_name=info.get_prog_name())
-def cli():
+def cli(ctx):
     """ CLI tool to build and manage custom Docker images. """
     pass
 
 
 @cli.command()
+@click.pass_context
 @click.option(
     "--from",
     "from_",
@@ -75,12 +79,12 @@ def cli():
     metavar="<latest|semantic versioning>",
     required=False,
 )
-@click.option(
-    "--with-velero",
-    help="Install velero. Examples: --with-velero=latest / --with-velero=1.5.2",
-    metavar="<latest|semantic versioning>",
-    required=False,
-)
+# @click.option(
+#     "--with-velero",
+#     help="Install velero. Examples: --with-velero=latest / --with-velero=1.5.2",
+#     metavar="<latest|semantic versioning>",
+#     required=False,
+# )
 @click.option(
     "--force",
     help="Ignore Docker cache and build from scratch.",
@@ -108,6 +112,7 @@ def cli():
     ),
 )
 def build(
+    ctx,
     from_,
     name,
     apt,
@@ -141,9 +146,9 @@ def build(
 
     dockerfile = ""
 
-    template = util.get_template("base.j2")
+    template = common.util.get_template("base.j2")
     dockerfile += template.render(
-        from_=from_, label=util.get_dugaire_image_label("dockerfile")
+        from_=from_, label=common.util.get_dugaire_image_label("dockerfile")
     )
 
     if apt:
@@ -171,7 +176,7 @@ def build(
         current_option_name = "--with-kubectl"
         current_option_value = with_kubectl
 
-        if not util.string_is_latest_or_version(current_option_value):
+        if not common.util.is_latest_or_version(current_option_value):
             usage_msg = f"{current_option_name}=<latest | semantic versioning>"
             example_msg = f"{current_option_name}=latest | {current_option_name}=1.17.0"
 
@@ -184,14 +189,14 @@ def build(
         dependency_list = ["curl", "ca-certificates"]
         dependency = " ".join(dependency_list)
 
-        apt_template = util.get_template("apt.j2")
+        apt_template = common.util.get_template("apt.j2")
         dockerfile += apt_template.render(packages=dependency)
 
         url = "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
         if with_kubectl != "latest":
             url = f"https://storage.googleapis.com/kubernetes-release/release/v{with_kubectl}/bin/linux/amd64/kubectl"
 
-        template = util.get_template("with_kubectl.j2")
+        template = common.util.get_template("with_kubectl.j2")
         dockerfile += template.render(url=url)
 
     if with_azurecli:
@@ -207,45 +212,13 @@ def build(
 
     if with_velero:
 
-        current_option_name = "--with-velero"
-        current_option_value = with_velero
+        velero = addons.velero.Velero(ctx)
+        result = velero.validate_option()
 
-        if not util.string_is_latest_or_version(current_option_value):
-            usage_msg = f"{current_option_name}=<latest | semantic versioning>"
-            example_msg = f"{current_option_name}=latest | {current_option_name}=1.5.2"
+        if not result["is_success"]:
+            raise click.BadOptionUsage(velero.option, result["msg"])
 
-            exc_msg = f"Bad usage {current_option_name}={current_option_value} \n"
-            exc_msg += f"Valid usage: {usage_msg} \n"
-            exc_msg += f"Examples: {example_msg}"
-            raise click.BadOptionUsage(current_option_name, exc_msg)
-
-        if not with_kubectl:
-            usage_msg = f"--with-kubectl=<latest | semantic versioning> {current_option_name}=<latest | semantic versioning>"
-            example_msg = f"--with-kubectl=latest {current_option_name}=latest"
-
-            exc_msg = f"Bad usage {current_option_name} requires --with-kubectl \n"
-            exc_msg += f"Valid usage: {usage_msg} \n"
-            exc_msg += f"Examples: {example_msg}"
-            raise click.BadOptionUsage(current_option_name, exc_msg)
-
-        dependency_list = {}
-        dependency_list = ["wget"]
-        dependency = " ".join(dependency_list)
-
-        apt_template = util.get_template("apt.j2")
-        dockerfile += apt_template.render(packages=dependency)
-
-        if with_velero == "latest":
-            import urllib.request
-
-            response = urllib.request.urlopen(
-                "https://api.github.com/repos/vmware-tanzu/velero/releases/latest"
-            ).read()
-            response = json.loads(response)
-            with_velero = response["tag_name"][1:]
-
-        template = util.get_template("with_velero.j2")
-        dockerfile += template.render(version=with_velero)
+        dockerfile += velero.get_dockerfile()
 
     image_id = None
     image_name = None
@@ -274,6 +247,10 @@ def build(
     if output == "dockerfile":
         click.echo(dockerfile)
 
+# print(build.__dict__)
+# sys.exit()
+velero = addons.velero.Velero()
+build.params.append(velero.get_click_option())
 
 @cli.command("list", help="List images built with dugaire.")
 @click.option(
