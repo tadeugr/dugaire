@@ -17,11 +17,11 @@ from io import BytesIO
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, f"{HERE}")
-sys.path.insert(1, f"{HERE}/../")
 
 """ Import custom modules. """
 
-from dugaire.common import module as common
+sys.path.insert(1, f"{HERE}/../dugaire")
+from common import module as common
 
 
 def make():
