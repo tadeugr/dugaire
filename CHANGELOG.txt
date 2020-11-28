@@ -1,5 +1,5 @@
 New structure: each addon has a Python module and class.
 
-Add Python Click Options dynamically.
+Solve dependencies automatically.
 
 Do not overlap dependencies.
