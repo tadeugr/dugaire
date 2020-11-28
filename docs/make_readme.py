@@ -21,12 +21,12 @@ sys.path.insert(1, f"{HERE}/../")
 
 """ Import custom modules. """
 
+from dugaire.common import module as common
 from dugaire import info
-from dugaire import util
 
 
 def make():
-    template = util.get_template(f"README.j2", searchpath=f"{HERE}/..")
+    template = common.util.get_template(f"{HERE}/..", f"README.j2")
 
     result = subprocess.run(["dugaire", "build", "--help"], stdout=subprocess.PIPE)
     usage_help = result.stdout.decode("utf8")

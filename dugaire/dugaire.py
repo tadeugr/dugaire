@@ -19,15 +19,12 @@ sys.path.insert(0, f"{HERE}")
 
 """ Import custom modules. """
 
-import info
-
-# import util
 from common import module as common
 from addons import module as addons
 
 @click.group()
 @click.pass_context
-@click.version_option(info.get_version(), prog_name=info.get_prog_name())
+@click.version_option(common.info.get_version(), prog_name=common.info.get_prog_name())
 def cli(ctx):
     """ CLI tool to build and manage custom Docker images. """
     pass
@@ -181,6 +178,8 @@ def build(
             raise click.BadOptionUsage(velero.option, msg)
         velero_dockerfile, stack = velero.get_dockerfile(stack)
         dockerfile += velero_dockerfile
+
+    """Build image."""
 
     image_id = None
     image_name = None
