@@ -10,8 +10,8 @@ sys.path.insert(1, f"{HERE}/../")
 
 from common import module as common
 
-class Kubectl:
 
+class Kubectl:
     def __init__(self, click_ctx=None):
 
         self.name = "kubectl"

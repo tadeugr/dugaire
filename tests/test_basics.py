@@ -20,6 +20,7 @@ import info
 
 _BUILT_IMAGES = []
 
+
 def test_help():
 
     cmd = ""

@@ -12,15 +12,12 @@ from common import module as common
 
 
 class Pip3:
-
     def __init__(self, click_ctx=None):
 
         self.name = "pip3"
         self.option = f"--{self.name}"
         self.parameter = f"{self.name}"
-        self.help_msg = (
-            f"Comma separeted list of packages (no blank space) to install using pip3 install. WARNING: requires --apt=python3-pip. Example: --apt=python3-pip {self.option}=ansible,jinja2"
-        )
+        self.help_msg = f"Comma separeted list of packages (no blank space) to install using pip3 install. WARNING: requires --apt=python3-pip. Example: --apt=python3-pip {self.option}=ansible,jinja2"
         self.metavar = "<pkg01|pkg01,pkg02>"
         is_required = False
 
@@ -45,14 +42,14 @@ class Pip3:
         dependency_list = {}
         for requires in self.dependencies:
             is_init = requires == "__init__"
-            is_in_stack = requires in stack            
+            is_in_stack = requires in stack
             is_in_option = requires in option_value_no_version
 
             if is_in_stack:
                 continue
             if not is_init and not is_in_option:
                 continue
-            
+
             for manager in self.dependencies[requires]:
                 for pkg in self.dependencies[requires][manager]:
                     if pkg in stack:
@@ -62,7 +59,7 @@ class Pip3:
                     if manager not in dependency_list:
                         dependency_list[manager] = []
                     dependency_list[manager].append(pkg)
-        
+
         dockerfile = ""
         for manager in dependency_list:
             packages = " ".join(dependency_list[manager])
@@ -78,7 +75,7 @@ class Pip3:
                 continue
             pip3_install.append(pkg)
             stack.append(pkg_no_version)
-        
+
         pip3_install = " ".join(pip3_install)
         template = common.util.get_template(HERE, f"{self.name}.j2")
         dockerfile += template.render(packages=pip3_install)

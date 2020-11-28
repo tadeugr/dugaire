@@ -22,6 +22,7 @@ sys.path.insert(0, f"{HERE}")
 from common import module as common
 from addons import module as addons
 
+
 @click.group()
 @click.pass_context
 @click.version_option(common.info.get_version(), prog_name=common.info.get_prog_name())
@@ -208,6 +209,7 @@ def build(
     if output == "dockerfile":
         click.echo(dockerfile)
 
+
 @cli.command("list", help="List images built with dugaire.")
 @click.option(
     "--short/--not-short",
@@ -220,7 +222,9 @@ def build(
 )
 def list_(short):
     client = docker.from_env()
-    images = client.images.list(filters={"label": [common.util.get_dugaire_image_label()]})
+    images = client.images.list(
+        filters={"label": [common.util.get_dugaire_image_label()]}
+    )
 
     if not len(images):
         click.echo("No images built with dugaire found.")
@@ -250,7 +254,9 @@ def remove(ctx, image):
     client = docker.from_env()
 
     if image == "all":
-        images = client.images.list(filters={"label": [common.util.get_dugaire_image_label()]})
+        images = client.images.list(
+            filters={"label": [common.util.get_dugaire_image_label()]}
+        )
         for docker_image in images:
             client.images.remove(image=docker_image.id, force=True)
 

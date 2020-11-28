@@ -12,13 +12,12 @@ from common import module as common
 
 
 class Apt:
-
     def __init__(self, click_ctx=None):
 
         self.name = "apt"
         self.option = f"--{self.name}"
         self.parameter = f"{self.name}"
-        
+
         if click_ctx:
             self.click_ctx = click_ctx
             self.option_value = self.click_ctx.params[self.parameter]
@@ -34,7 +33,7 @@ class Apt:
                 continue
             apt_install.append(pkg)
             stack.append(pkg)
-        
+
         dockerfile = ""
         packages = " ".join(apt_install)
         template = common.util.get_template(HERE, f"{self.name}.j2")

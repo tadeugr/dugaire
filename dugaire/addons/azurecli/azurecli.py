@@ -12,18 +12,15 @@ from common import module as common
 
 
 class Azurecli:
-
     def __init__(self, click_ctx=None):
 
         self.name = "azurecli"
         self.option = f"--with-{self.name}"
         self.parameter = f"with_{self.name}"
-        self.help_msg = (
-            f'Install Azure CLI. Examples: {self.option}=latest / For older versions, use pip3: --apt=python3-pip --pip="azure-cli==2.2.0"'
-        )
+        self.help_msg = f'Install Azure CLI. Examples: {self.option}=latest / For older versions, use pip3: --apt=python3-pip --pip="azure-cli==2.2.0"'
         is_required = False
 
-        self.choices = ['latest']
+        self.choices = ["latest"]
 
         if click_ctx:
             self.click_ctx = click_ctx

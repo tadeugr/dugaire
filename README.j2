@@ -178,7 +178,9 @@ Install kubectl.
 
 #### Requirements
 
-No requirements.
+All requirements are solved **automatically** by `dugaire`:
+
+* `curl` `ca-certificates`
 
 #### Options
 
@@ -188,9 +190,9 @@ No requirements.
 
 See all versions available [here](https://github.com/kubernetes/kubectl/releases).
 
-#### Covered by automated tests
+#### Examples
 
-*You may install any version available. The commands bellow only describes versions included in the automated testsß.*
+*Covered by automated tests, you may install any package version though.*
 
 ```
 dugaire build --from=ubuntu:20.04 --with-kubectl=latest
@@ -216,9 +218,9 @@ Install velero.
 
 See all versions available [here](https://github.com/vmware-tanzu/velero/releases).
 
-#### Covered by automated tests
+#### Examples
 
-*You may install any version available. The commands bellow only describes versions included in the automated testsß.*
+*Covered by automated tests, you may install any package version though.*
 
 ```
 dugaire build --from=ubuntu:20.04 --with-kubectl=latest --with-velero=latest

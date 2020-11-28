@@ -22,7 +22,6 @@ sys.path.insert(1, f"{HERE}/../")
 """ Import custom modules. """
 
 from dugaire.common import module as common
-from dugaire import info
 
 
 def make():

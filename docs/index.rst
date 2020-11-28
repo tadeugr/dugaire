@@ -136,18 +136,15 @@ Usage
      --apt <pkg01|pkg01,pkg02>       Comma separeted list of packages (no blank
                                      space) to install using apt-get install.
                                      Requires a base image with apt-get. Example:
-                                     -apt=curl,vim
+                                     --apt=curl,vim
 
      --pip3 <pkg01|pkg01,pkg02>      Comma separeted list of packages (no blank
                                      space) to install using pip3 install.
-                                     WARNING: requires -apt=python3-pip. Example:
-                                     -apt=python3-pip -pip3=ansible,jinja2
+                                     Example: --pip3=ansible,jinja2==2.11.2
 
-     --with-azurecli, --with-az <latest>
-                                     Install Azure CLI. Examples: --with-
+     --with-azurecli latest          Install Azure CLI. Examples: --with-
                                      azurecli=latest / For older versions, use
-                                     pip3: --apt=python3-pip --pip="azure-
-                                     cli==2.2.0"
+                                     pip3: --pip3="azure-cli==2.2.0"
 
      --with-kubectl <latest|semantic versioning>
                                      Install kubectl. Examples: --with-
@@ -167,8 +164,8 @@ Usage
 
      --help                          Show this message and exit.
 
-Supported features
-==================
+Features
+========
 
 Base images
 -----------
@@ -181,25 +178,44 @@ ubuntu ``ubuntu:18.04`` ``ubuntu:20.04``
 
 *You may use base images that were built from the tested images.*
 
-Package/Dependency managers
+Package/Dependency Managers
 ---------------------------
 
 apt-get
 ~~~~~~~
 
-You can install any package using ``apt``. Use a comma separated (no
-blank space) list of packages you want to install. Example:
-``--apt=wget,iputils-ping``.
+You can install any package available in the distro repository using
+``apt``.
+
+Use a comma separated (no blank space) list of packages you want to
+install. Examples:
+
+::
+
+   dubaire build --apt=wget,iputils-ping
 
 pip3
 ~~~~
 
-**WARNING** to use ``pip3`` you must explicitly install ``pip3`` using
-``apt``: ``--apt=python3-pip``.
+*WARNING* When using ``pip3``, ``dugaire`` will automatically use
+``--apt=python3-pip``.
 
-You can install any package using ``pip3``. Use a comma separated (no
-blank space) list of packages you want to install. Example:
-``--pip3=jinja2,pyyaml``.
+You can install any PyPI package using ``pip3``.
+
+To install the latest versions, use a comma separated (no blank space)
+list of packages. Examples:
+
+::
+
+   dugaire build --pip3=urllib3,Jinja2
+
+To install specific versions, use a comma separated (no blank space)
+list of packages between double quotes, each package name must be
+followed by ``==<semantic versioning>``. Examples:
+
+::
+
+   dugaire build --pip3="urllib3==1.26.2,Jinja2==2.11.2"
 
 Applications
 ------------
@@ -212,30 +228,33 @@ Install Azure Command Line Interface.
 Requirements
 ^^^^^^^^^^^^
 
-To install specific versions (not *latest*), use ``pip3`` as follows
-``--apt=python3-pip --pip3="azure-cli==<semantic versioning>"``
+All requirements are solved **automatically** by ``dugaire``:
+
+-  Azure CLI latest version: ``curl`` ``ca-certificates``
+
+-  Azure CLI specific versions: ``gcc`` ``python3-pip`` ``python3-dev``
 
 Options
 ^^^^^^^
 
 ``--with-azurecli=latest`` to install the latest version.
 
-``--apt=python3-pip --pip3="azure-cli==2.2.0"`` *(example)* to install
-specific versions.
+``--pip3="azure-cli==2.2.0"`` *(example)* to install specific versions.
 
 See all versions available
 `here <https://github.com/Azure/azure-cli/releases>`__.
 
-Covered by automated tests
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Examples
+^^^^^^^^
 
-*You may install any version available. The commands bellow only
-describes versions included in the automated testsß.*
+*Covered by automated tests, you may install any package version
+though.*
 
 ::
 
    dugaire build --with-azurecli=latest
-   dugaire build --from=ubuntu:20.04 --apt=python3-pip --pip3="azure-cli==2.14.2"
+   dugaire build --from=ubuntu:20.04 --pip3="azure-cli==2.14.2"
+   dugaire build --from=ubuntu:18.04 --pip3="azure-cli==2.13.0"
 
 kubectl
 ~~~~~~~
@@ -247,7 +266,9 @@ Install kubectl.
 Requirements
 ^^^^^^^^^^^^
 
-No requirements.
+All requirements are solved **automatically** by ``dugaire``:
+
+-  ``curl`` ``ca-certificates``
 
 .. _options-1:
 
@@ -261,13 +282,13 @@ Options
 See all versions available
 `here <https://github.com/kubernetes/kubectl/releases>`__.
 
-.. _covered-by-automated-tests-1:
+.. _examples-1:
 
-Covered by automated tests
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Examples
+^^^^^^^^
 
-*You may install any version available. The commands bellow only
-describes versions included in the automated testsß.*
+*Covered by automated tests, you may install any package version
+though.*
 
 ::
 
@@ -301,13 +322,13 @@ Options
 See all versions available
 `here <https://github.com/vmware-tanzu/velero/releases>`__.
 
-.. _covered-by-automated-tests-2:
+.. _examples-2:
 
-Covered by automated tests
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Examples
+^^^^^^^^
 
-*You may install any version available. The commands bellow only
-describes versions included in the automated testsß.*
+*Covered by automated tests, you may install any package version
+though.*
 
 ::
 

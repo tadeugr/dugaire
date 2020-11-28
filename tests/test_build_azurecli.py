@@ -49,6 +49,7 @@ def test_from_ubuntu20_04_pkg_2_14_2():
 
     assert pkg_version == docker_run_output["azure-cli"]
 
+
 def test_from_ubuntu18_04_pkg_2_13_0():
 
     from_ = "ubuntu:18.04"

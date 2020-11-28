@@ -12,7 +12,6 @@ from common import module as common
 
 
 class Velero:
-
     def __init__(self, click_ctx=None):
 
         self.name = "velero"
