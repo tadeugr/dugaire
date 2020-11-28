@@ -18,6 +18,7 @@ import helper
 sys.path.insert(1, f"{HERE}/../dugaire")
 from common import module as common
 
+
 def test_from_ubuntu_20_04_bad_usage():
     invalid_option = "THIS.IS.INVALID"
     cmd = f"build --from=ubuntu:20.04 --with-velero={invalid_option}"

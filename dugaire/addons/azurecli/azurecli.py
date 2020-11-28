@@ -11,59 +11,36 @@ sys.path.insert(1, f"{HERE}/../")
 from common import module as common
 
 
-class Velero:
-
-    name: str
-    option: str
-    option_value: str
-    parameter: str
-    help_msg: str
-    metavar: str
-    is_required: bool
-    click_ctx: None
-    dependencies: List
+class Azurecli:
 
     def __init__(self, click_ctx=None):
 
-        self.name = "velero"
+        self.name = "azurecli"
         self.option = f"--with-{self.name}"
         self.parameter = f"with_{self.name}"
         self.help_msg = (
-            f"Install velero. Examples: {self.option}=latest / {self.option}=1.5.2"
+            f'Install Azure CLI. Examples: {self.option}=latest / For older versions, use pip3: --apt=python3-pip --pip="azure-cli==2.2.0"'
         )
-        self.metavar = "<latest|semantic versioning>"
         is_required = False
+
+        self.choices = ['latest']
 
         if click_ctx:
             self.click_ctx = click_ctx
             self.option_value = self.click_ctx.params[self.parameter]
 
-        self.dependencies = {"apt": ["wget"]}
+        self.dependencies = {"apt": ["curl", "ca-certificates"]}
 
     def get_click_option(self):
 
         option = click.Option(
             [self.option],
             help=self.help_msg,
-            metavar=self.metavar,
             required=False,
+            type=click.Choice(self.choices, case_sensitive=False)
         )
 
         return option
-
-    def validate_option(self):
-
-        if not common.util.is_latest_or_version(self.option_value):
-            error_msg = f"Bad usage {self.option}={self.option_value} \n"
-            error_msg += f"To get help, run: dugaire build --help"
-            return [False, error_msg]
-
-        if not self.click_ctx.params["with_kubectl"]:
-            error_msg = f"{self.option} requires --with-kubectl \n"
-            error_msg += f"To get help, run: dugaire build --help"
-            return [False, error_msg]
-
-        return [True, None]
 
     def get_dockerfile(self, stack: List):
 
@@ -87,15 +64,6 @@ class Velero:
             )
             dockerfile += apt_template.render(packages=packages)
 
-        if self.option_value == "latest":
-            import urllib.request
-
-            response = urllib.request.urlopen(
-                "https://api.github.com/repos/vmware-tanzu/velero/releases/latest"
-            ).read()
-            response = json.loads(response)
-            self.option_value = response["tag_name"][1:]
-
         template = common.util.get_template(HERE, f"{self.name}.j2")
-        dockerfile += template.render(version=self.option_value)
+        dockerfile += template.render()
         return [dockerfile, stack]

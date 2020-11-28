@@ -10,27 +10,15 @@ sys.path.insert(1, f"{HERE}/../")
 
 from common import module as common
 
-
-class Velero:
-
-    name: str
-    option: str
-    option_value: str
-    parameter: str
-    help_msg: str
-    metavar: str
-    is_required: bool
-    click_ctx: None
-    dependencies: List
+class Kubectl:
 
     def __init__(self, click_ctx=None):
 
-        self.name = "velero"
+        self.name = "kubectl"
         self.option = f"--with-{self.name}"
         self.parameter = f"with_{self.name}"
-        self.help_msg = (
-            f"Install velero. Examples: {self.option}=latest / {self.option}=1.5.2"
-        )
+        self.examples_msg = f"Examples: {self.option}=latest / {self.option}=1.17.0"
+        self.help_msg = f"Install kubectl. {self.examples_msg}"
         self.metavar = "<latest|semantic versioning>"
         is_required = False
 
@@ -38,7 +26,7 @@ class Velero:
             self.click_ctx = click_ctx
             self.option_value = self.click_ctx.params[self.parameter]
 
-        self.dependencies = {"apt": ["wget"]}
+        self.dependencies = {"apt": ["curl", "ca-certificates"]}
 
     def get_click_option(self):
 
@@ -55,11 +43,6 @@ class Velero:
 
         if not common.util.is_latest_or_version(self.option_value):
             error_msg = f"Bad usage {self.option}={self.option_value} \n"
-            error_msg += f"To get help, run: dugaire build --help"
-            return [False, error_msg]
-
-        if not self.click_ctx.params["with_kubectl"]:
-            error_msg = f"{self.option} requires --with-kubectl \n"
             error_msg += f"To get help, run: dugaire build --help"
             return [False, error_msg]
 
@@ -87,15 +70,11 @@ class Velero:
             )
             dockerfile += apt_template.render(packages=packages)
 
-        if self.option_value == "latest":
-            import urllib.request
-
-            response = urllib.request.urlopen(
-                "https://api.github.com/repos/vmware-tanzu/velero/releases/latest"
-            ).read()
-            response = json.loads(response)
-            self.option_value = response["tag_name"][1:]
+        url = "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+        if self.option_value != "latest":
+            url = f"https://storage.googleapis.com/kubernetes-release/release/v{self.option_value}/bin/linux/amd64/kubectl"
 
         template = common.util.get_template(HERE, f"{self.name}.j2")
-        dockerfile += template.render(version=self.option_value)
+        dockerfile += template.render(url=url)
+
         return [dockerfile, stack]

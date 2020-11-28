@@ -20,7 +20,8 @@ sys.path.insert(0, f"{HERE}")
 """ Import custom modules. """
 
 import info
-#import util
+
+# import util
 from common import module as common
 from addons import module as addons
 
@@ -65,26 +66,6 @@ def cli(ctx):
     metavar="<pkg01|pkg01,pkg02>",
     required=False,
 )
-@click.option(
-    "--with-azurecli",
-    "--with-az",
-    help='Install Azure CLI. Examples: --with-azurecli=latest / For older versions, use pip3: --apt=python3-pip --pip="azure-cli==2.2.0"',
-    metavar="<latest>",
-    required=False,
-    type=click.Choice(["latest"], case_sensitive=False),
-)
-@click.option(
-    "--with-kubectl",
-    help="Install kubectl. Examples: --with-kubectl=latest / --with-kubectl=1.17.0",
-    metavar="<latest|semantic versioning>",
-    required=False,
-)
-# @click.option(
-#     "--with-velero",
-#     help="Install velero. Examples: --with-velero=latest / --with-velero=1.5.2",
-#     metavar="<latest|semantic versioning>",
-#     required=False,
-# )
 @click.option(
     "--force",
     help="Ignore Docker cache and build from scratch.",
@@ -145,8 +126,9 @@ def build(
     """
 
     dockerfile = ""
+    stack = []
 
-    template = common.util.get_template("base.j2")
+    template = common.util.get_template(f"{HERE}/templates", "base.j2")
     dockerfile += template.render(
         from_=from_, label=common.util.get_dugaire_image_label("dockerfile")
     )
@@ -173,52 +155,25 @@ def build(
         dockerfile += template.render(packages=packages)
 
     if with_kubectl:
-        current_option_name = "--with-kubectl"
-        current_option_value = with_kubectl
-
-        if not common.util.is_latest_or_version(current_option_value):
-            usage_msg = f"{current_option_name}=<latest | semantic versioning>"
-            example_msg = f"{current_option_name}=latest | {current_option_name}=1.17.0"
-
-            exc_msg = f"Bad usage {current_option_name}={current_option_value} \n"
-            exc_msg += f"Valid usage: {usage_msg} \n"
-            exc_msg += f"Examples: {example_msg}"
-            raise click.BadOptionUsage(current_option_name, exc_msg)
-
-        dependency_list = {}
-        dependency_list = ["curl", "ca-certificates"]
-        dependency = " ".join(dependency_list)
-
-        apt_template = common.util.get_template("apt.j2")
-        dockerfile += apt_template.render(packages=dependency)
-
-        url = "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-        if with_kubectl != "latest":
-            url = f"https://storage.googleapis.com/kubernetes-release/release/v{with_kubectl}/bin/linux/amd64/kubectl"
-
-        template = common.util.get_template("with_kubectl.j2")
-        dockerfile += template.render(url=url)
+        addon = addons.kubectl.Kubectl(ctx)
+        is_success, msg = addon.validate_option()
+        if not is_success:
+            raise click.BadOptionUsage(addon.option, msg)
+        addon_dockerfile, stack = addon.get_dockerfile(stack)
+        dockerfile += addon_dockerfile
 
     if with_azurecli:
-        dependency_list = {}
-        dependency_list = ["curl", "ca-certificates"]
-        dependency = " ".join(dependency_list)
-
-        apt_template = util.get_template("apt.j2")
-        dockerfile += apt_template.render(packages=dependency)
-
-        template = util.get_template("with_azurecli.j2")
-        dockerfile += template.render()
+        azurecli = addons.azurecli.Azurecli(ctx)
+        azurecli_dockerfile, stack = azurecli.get_dockerfile(stack)
+        dockerfile += azurecli_dockerfile
 
     if with_velero:
-
         velero = addons.velero.Velero(ctx)
-        result = velero.validate_option()
-
-        if not result["is_success"]:
-            raise click.BadOptionUsage(velero.option, result["msg"])
-
-        dockerfile += velero.get_dockerfile()
+        is_success, msg = velero.validate_option()
+        if not is_success:
+            raise click.BadOptionUsage(velero.option, msg)
+        velero_dockerfile, stack = velero.get_dockerfile(stack)
+        dockerfile += velero_dockerfile
 
     image_id = None
     image_name = None
@@ -246,11 +201,6 @@ def build(
         click.echo(image_name)
     if output == "dockerfile":
         click.echo(dockerfile)
-
-# print(build.__dict__)
-# sys.exit()
-velero = addons.velero.Velero()
-build.params.append(velero.get_click_option())
 
 @cli.command("list", help="List images built with dugaire.")
 @click.option(
@@ -321,6 +271,16 @@ def main():
     """Main function executed by the CLI command."""
     patch_click()
     click_completion.init()
+
+    addon = addons.azurecli.Azurecli()
+    build.params.append(addon.get_click_option())
+
+    addon = addons.kubectl.Kubectl()
+    build.params.append(addon.get_click_option())
+
+    addon = addons.velero.Velero()
+    build.params.append(addon.get_click_option())
+
     cli()
 
 

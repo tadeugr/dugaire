@@ -21,7 +21,7 @@ def is_latest_or_version(check_string):
     return True
 
 
-def get_template(file_name, searchpath=f"{HERE}/../templates"):
+def get_template(searchpath, file_name):
     """ Load and return a Jinja template file. """
 
     templateLoader = jinja2.FileSystemLoader(searchpath=searchpath)
