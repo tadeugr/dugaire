@@ -16,8 +16,8 @@ class Apt:
     def __init__(self, click_ctx=None):
 
         self.name = "apt"
-        self.option = f"--with-{self.name}"
-        self.parameter = f"with_{self.name}"
+        self.option = f"--{self.name}"
+        self.parameter = f"{self.name}"
         
         if click_ctx:
             self.click_ctx = click_ctx
@@ -33,8 +33,9 @@ class Apt:
             if pkg in stack:
                 continue
             apt_install.append(pkg)
-            stack.append(apt_install)
+            stack.append(pkg)
         
+        dockerfile = ""
         packages = " ".join(apt_install)
         template = common.util.get_template(HERE, f"{self.name}.j2")
         dockerfile += template.render(packages=packages)

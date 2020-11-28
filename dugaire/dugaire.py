@@ -149,9 +149,9 @@ def build(
     )
 
     if apt:
-        packages = apt.replace(",", " ")
-        template = common.util.get_template(f"{HERE}/templates", "apt.j2")
-        dockerfile += template.render(packages=packages)
+        addon = addons.apt.Apt(ctx)
+        addon_dockerfile, stack = addon.get_dockerfile(stack)
+        dockerfile += addon_dockerfile
 
     if pip3:
         addon = addons.pip3.Pip3(ctx)
