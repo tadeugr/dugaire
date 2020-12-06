@@ -30,7 +30,7 @@ def test_from_ubuntu_20_04_bad_usage():
 def test_from_ubuntu_20_04_no_kubectl():
     cmd = f"build --from=ubuntu:20.04 --with-velero=1.5.2"
     result = helper.cli(cmd)
-    assert "Bad usage --with-velero requires --with-kubectl" in result
+    assert "--with-velero requires --with-kubectl" in result
 
 
 def test_from_ubuntu_20_04_pkg_latest():
