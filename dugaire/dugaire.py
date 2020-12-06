@@ -59,7 +59,7 @@ def cli(ctx):
 )
 @click.option(
     "--pip3",
-    help="Comma separeted list of packages (no blank space) to install using pip3 install. Example: --pip3=ansible,jinja2==2.11.2",
+    help='Comma separeted list of packages (no blank space) to install using pip3 install. Example: --pip3="ansible,jinja2==2.11.2"',
     metavar="<pkg01|pkg01,pkg02>",
     required=False,
 )
