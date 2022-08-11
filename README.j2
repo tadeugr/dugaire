@@ -122,31 +122,6 @@ You can install any package using `pip3`. Use a comma separated (no blank space)
 
 ## Applications
 
-### azure-cli
-
-Install Azure Command Line Interface.
-
-#### Requirements
-
-To install specific versions (not *latest*), use `pip3` as follows `--apt=python3-pip --pip3="azure-cli==<semantic versioning>"`
-
-#### Options
-
-`--with-azurecli=latest` to install the latest version.
-
-`--apt=python3-pip --pip3="azure-cli==2.2.0"` *(example)* to install specific versions.
-
-See all versions available [here](https://github.com/Azure/azure-cli/releases).
-
-#### Covered by automated tests
-
-*You may install any version available. The commands bellow only describes versions included in the automated testsß.*
-
-```
-dugaire build --with-azurecli=latest
-dugaire build --from=ubuntu:20.04 --apt=python3-pip --pip3="azure-cli==2.14.2"
-```
-
 ### kubectl
 
 Install kubectl.

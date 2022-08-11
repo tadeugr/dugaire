@@ -136,11 +136,6 @@ Usage
                                      space) to install using pip3 install.
                                      WARNING: requires -apt=python3-pip. Example:
                                      -apt=python3-pip -pip3=ansible,jinja2
-     --with-azurecli, --with-az <latest>
-                                     Install Azure CLI. Examples: --with-
-                                     azurecli=latest / For older versions, use
-                                     pip3: --apt=python3-pip --pip="azure-
-                                     cli==2.2.0"
      --with-kubectl <latest|semantic versioning>
                                      Install kubectl. Examples: --with-
                                      kubectl=latest / --with-kubectl=1.17.0
@@ -194,52 +189,15 @@ blank space) list of packages you want to install. Example:
 Applications
 ------------
 
-azure-cli
-~~~~~~~~~
-
-Install Azure Command Line Interface.
-
-Requirements
-^^^^^^^^^^^^
-
-To install specific versions (not *latest*), use ``pip3`` as follows
-``--apt=python3-pip --pip3="azure-cli==<semantic versioning>"``
-
-Options
-^^^^^^^
-
-``--with-azurecli=latest`` to install the latest version.
-
-``--apt=python3-pip --pip3="azure-cli==2.2.0"`` *(example)* to install
-specific versions.
-
-See all versions available
-`here <https://github.com/Azure/azure-cli/releases>`__.
-
-Covered by automated tests
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-*You may install any version available. The commands bellow only
-describes versions included in the automated testsß.*
-
-::
-
-   dugaire build --with-azurecli=latest
-   dugaire build --from=ubuntu:20.04 --apt=python3-pip --pip3="azure-cli==2.14.2"
-
 kubectl
 ~~~~~~~
 
 Install kubectl.
 
-.. _requirements-1:
-
 Requirements
 ^^^^^^^^^^^^
 
 No requirements.
-
-.. _options-1:
 
 Options
 ^^^^^^^
@@ -250,8 +208,6 @@ Options
 
 See all versions available
 `here <https://github.com/kubernetes/kubectl/releases>`__.
-
-.. _covered-by-automated-tests-1:
 
 Covered by automated tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -272,14 +228,14 @@ velero
 
 Install velero.
 
-.. _requirements-2:
+.. _requirements-1:
 
 Requirements
 ^^^^^^^^^^^^
 
 ``--with-velero`` requires ``--with-kubectl``.
 
-.. _options-2:
+.. _options-1:
 
 Options
 ^^^^^^^
@@ -291,7 +247,7 @@ Options
 See all versions available
 `here <https://github.com/vmware-tanzu/velero/releases>`__.
 
-.. _covered-by-automated-tests-2:
+.. _covered-by-automated-tests-1:
 
 Covered by automated tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -362,7 +318,7 @@ Then you should be able to run ``dugaire``.
 Development
 ===========
 
-.. _requirements-3:
+.. _requirements-2:
 
 Requirements
 ------------

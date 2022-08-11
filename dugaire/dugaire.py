@@ -70,14 +70,6 @@ def version():
     required=False,
 )
 @click.option(
-    "--with-azurecli",
-    "--with-az",
-    help='Install Azure CLI. Examples: --with-azurecli=latest / For older versions, use pip3: --apt=python3-pip --pip="azure-cli==2.2.0"',
-    metavar="<latest>",
-    required=False,
-    type=click.Choice(["latest"], case_sensitive=False),
-)
-@click.option(
     "--with-kubectl",
     help="Install kubectl. Examples: --with-kubectl=latest / --with-kubectl=1.17.0",
     metavar="<latest|semantic versioning>",
@@ -126,7 +118,6 @@ def build(
     name,
     apt,
     pip3,
-    with_azurecli,
     with_kubectl,
     with_terraform,
     with_velero,
@@ -168,7 +159,7 @@ def build(
 
     if pip3:
         dependency_list = {}
-        dependency_list["azure-cli"] = ["gcc", "python3-dev"]
+        # dependency_list["azure-cli"] = ["gcc", "python3-dev"]
 
         pip3_install = pip3.split(",")
         for package in pip3_install:
@@ -208,17 +199,6 @@ def build(
 
         template = util.get_template("with_kubectl.j2")
         dockerfile += template.render(url=url)
-
-    if with_azurecli:
-        dependency_list = {}
-        dependency_list = ["curl", "ca-certificates"]
-        dependency = " ".join(dependency_list)
-
-        apt_template = util.get_template("apt.j2")
-        dockerfile += apt_template.render(packages=dependency)
-
-        template = util.get_template("with_azurecli.j2")
-        dockerfile += template.render()
 
     if with_terraform:
         current_option_name = "--with-terraform"
