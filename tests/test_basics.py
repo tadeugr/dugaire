@@ -29,18 +29,20 @@ def test_help():
 
 
 def test_version_parameter():
-    """ Test command: dugaire --version """
+    """Test command: dugaire --version"""
 
     result = common.cli("--version")
     info_version = info.get_version()
     assert info_version == result
 
+
 def test_version_command():
-    """ Test command: dugaire version """
+    """Test command: dugaire version"""
 
     result = common.cli("version")
     info_version = info.get_version()
     assert info_version == result
+
 
 def test_build_default():
     global _BUILT_IMAGES

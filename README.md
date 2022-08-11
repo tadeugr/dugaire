@@ -3,7 +3,7 @@ Quickly build custom Docker images for local development without having to write
 ![dugaire](https://github.com/tadeugr/dugaire/blob/master/docs/assets/tty.gif?raw=true)
 
 [![PyPI](https://img.shields.io/badge/pypi-latest-blue)](https://pypi.org/project/dugaire/)
-[![Python](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue)](https://pypi.org/project/dugaire/)
+[![Python](https://img.shields.io/badge/python-3.7%20%7C%203.8-blue)](https://pypi.org/project/dugaire/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![test](https://github.com/tadeugr/dugaire/workflows/test/badge.svg?branch=master)](https://github.com/tadeugr/dugaire/actions?query=workflow%3Atest)
 [![publish](https://github.com/tadeugr/dugaire/workflows/publish/badge.svg)](https://github.com/tadeugr/dugaire/actions?query=workflow%3Apublish)
@@ -296,6 +296,10 @@ export LC_CTYPE="en_US.UTF-8"
 Then you should be able to run `dugaire`.
 
 # Development
+
+## Requirements
+
+- `pandoc` https://pandoc.org/installing.html
 
 Create a virtualenv
 

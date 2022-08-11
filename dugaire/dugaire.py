@@ -27,13 +27,14 @@ import util
 @click.group()
 @click.version_option(info.get_version(), message="%(version)s")
 def cli():
-    """ CLI tool to build and manage custom Docker images. """
+    """CLI tool to build and manage custom Docker images."""
     pass
+
 
 @cli.command()
 def version():
-    """ Show the version and exit. """
-    
+    """Show the version and exit."""
+
     click.echo(info.get_version())
 
 
@@ -384,7 +385,7 @@ def patch_click() -> None:
 
 def main():
     """Main function executed by the CLI command."""
-    
+
     # It seems newer click version does not require patching
     # patch_click()
     click_completion.init()
