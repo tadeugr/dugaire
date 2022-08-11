@@ -28,18 +28,19 @@ def test_help():
     assert f"Usage: cli [OPTIONS] COMMAND [ARGS]" in result
 
 
-def test_version():
+def test_version_parameter():
+    """ Test command: dugaire --version """
 
-    cmd = ""
-    cmd += "--version"
-
-    result = common.cli(cmd)
-
+    result = common.cli("--version")
     info_version = info.get_version()
-    info_prog_name = info.get_prog_name()
+    assert info_version == result
 
-    assert f"{info_prog_name}, version {info_version}" == result
+def test_version_command():
+    """ Test command: dugaire version """
 
+    result = common.cli("version")
+    info_version = info.get_version()
+    assert info_version == result
 
 def test_build_default():
     global _BUILT_IMAGES

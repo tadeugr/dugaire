@@ -1,7 +1,7 @@
 #
 # Base
 #
-FROM {{from_}}
+FROM --platform=linux/amd64 {{from_}}
 LABEL {{label}}
 RUN apt-get update -qq
 {# EOF #}

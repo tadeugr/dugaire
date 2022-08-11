@@ -19,6 +19,8 @@ import common
 
 
 def cli(cmd):
+    print("---------------")
+    print(dugaire.cli)
     result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
     result = result.output.strip()
     return result

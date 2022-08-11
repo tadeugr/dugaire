@@ -1,5 +1,3 @@
-# dugaire
-
 Quickly build custom Docker images for local development without having to write Dockerfiles.
 
 ![dugaire](https://github.com/tadeugr/dugaire/blob/master/docs/assets/tty.gif?raw=true)
@@ -119,42 +117,35 @@ Options:
   --from <name:tag>               Base image (used in Dockerfile FROM).
                                   Example: --from=ubuntu:20.04  [default:
                                   ubuntu:18.04; required]
-
   --name <name:tag>               Image name. Example: --name="myimage:0.0.1"
                                   [default: random]
-
   --apt <pkg01|pkg01,pkg02>       Comma separeted list of packages (no blank
                                   space) to install using apt-get install.
                                   Requires a base image with apt-get. Example:
                                   -apt=curl,vim
-
   --pip3 <pkg01|pkg01,pkg02>      Comma separeted list of packages (no blank
                                   space) to install using pip3 install.
                                   WARNING: requires -apt=python3-pip. Example:
                                   -apt=python3-pip -pip3=ansible,jinja2
-
   --with-azurecli, --with-az <latest>
                                   Install Azure CLI. Examples: --with-
                                   azurecli=latest / For older versions, use
                                   pip3: --apt=python3-pip --pip="azure-
                                   cli==2.2.0"
-
   --with-kubectl <latest|semantic versioning>
                                   Install kubectl. Examples: --with-
                                   kubectl=latest / --with-kubectl=1.17.0
-
+  --with-terraform <latest|semantic versioning>
+                                  Install Terraform. Examples: --with-
+                                  terraform=latest / --with-terraform=0.15.5
   --with-velero <latest|semantic versioning>
                                   Install velero. Examples: --with-
                                   velero=latest / --with-velero=1.5.2
-
   --force                         Ignore Docker cache and build from scratch.
-                                  [default: False]
-
-  --dry-run                       Do not build image.  [default: False]
+  --dry-run                       Do not build image.
   --output [image.id|image.id.short|image.name|dockerfile]
                                   Command output options.  [default:
                                   image.id.short]
-
   --help                          Show this message and exit.
 
 ```
@@ -303,6 +294,12 @@ export LC_CTYPE="en_US.UTF-8"
 ```
 
 Then you should be able to run `dugaire`.
+
+# Development
+
+Create a virtualenv
+
+make install-dev
 
 # License
 

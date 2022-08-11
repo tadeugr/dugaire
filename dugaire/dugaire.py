@@ -3,6 +3,7 @@
 """ Import comunity modules. """
 
 import os
+from platform import platform
 import sys
 import docker
 import click
@@ -24,10 +25,16 @@ import util
 
 
 @click.group()
-@click.version_option(info.get_version(), prog_name=info.get_prog_name())
+@click.version_option(info.get_version(), message="%(version)s")
 def cli():
     """ CLI tool to build and manage custom Docker images. """
     pass
+
+@cli.command()
+def version():
+    """ Show the version and exit. """
+    
+    click.echo(info.get_version())
 
 
 @cli.command()
@@ -76,6 +83,12 @@ def cli():
     required=False,
 )
 @click.option(
+    "--with-terraform",
+    help="Install Terraform. Examples: --with-terraform=latest / --with-terraform=0.15.5",
+    metavar="<latest|semantic versioning>",
+    required=False,
+)
+@click.option(
     "--with-velero",
     help="Install velero. Examples: --with-velero=latest / --with-velero=1.5.2",
     metavar="<latest|semantic versioning>",
@@ -114,6 +127,7 @@ def build(
     pip3,
     with_azurecli,
     with_kubectl,
+    with_terraform,
     with_velero,
     force,
     dry_run,
@@ -205,6 +219,33 @@ def build(
         template = util.get_template("with_azurecli.j2")
         dockerfile += template.render()
 
+    if with_terraform:
+        current_option_name = "--with-terraform"
+        current_option_value = with_terraform
+
+        if not util.is_valid_version(current_option_value):
+            usage_msg = f"{current_option_name}=<latest | semantic versioning>"
+            example_msg = f"{current_option_name}=latest | {current_option_name}=1.17.0"
+
+            exc_msg = f"Bad usage {current_option_name}={current_option_value} \n"
+            exc_msg += f"Valid usage: {usage_msg} \n"
+            exc_msg += f"Examples: {example_msg}"
+            raise click.BadOptionUsage(current_option_name, exc_msg)
+
+        dependency_list = {}
+        dependency_list = ["curl", "ca-certificates"]
+        dependency = " ".join(dependency_list)
+
+        apt_template = util.get_template("apt.j2")
+        dockerfile += apt_template.render(packages=dependency)
+
+        url = "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+        if with_kubectl != "latest":
+            url = f"https://storage.googleapis.com/kubernetes-release/release/v{with_kubectl}/bin/linux/amd64/kubectl"
+
+        template = util.get_template("with_kubectl.j2")
+        dockerfile += template.render(url=url)
+
     if with_velero:
 
         current_option_name = "--with-velero"
@@ -258,6 +299,7 @@ def build(
             random_tag = str(uuid.uuid4())[:8]
             image_name = f"dug-{random_name}:{random_tag}"
 
+        # --platform linux/amd64
         image, error = client.images.build(
             fileobj=f, tag=image_name, nocache=force, rm=True, forcerm=True
         )
@@ -342,11 +384,14 @@ def patch_click() -> None:
 
 def main():
     """Main function executed by the CLI command."""
-    patch_click()
+    
+    # It seems newer click version does not require patching
+    # patch_click()
     click_completion.init()
     cli()
 
 
 if __name__ == "__main__":
     """Call the main function."""
+
     main()

@@ -16,6 +16,7 @@ import info
 
 # REAME content
 README = open(os.path.join(HERE, "README.md")).read()
+REQUIREMENTS = open(os.path.join(HERE, "requirements.txt")).read().splitlines()
 
 setup(
     name=info.get_prog_name(),
@@ -29,16 +30,10 @@ setup(
     classifiers=[
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
     ],
     packages=find_packages(exclude=("tests",)),
     include_package_data=True,
-    install_requires=[
-        "docker==4.3.1",
-        "click==7.1.2",
-        "Jinja2==2.11.2",
-        "click-completion==0.5.2",
-    ],
+    install_requires=[REQUIREMENTS],
     entry_points={"console_scripts": ["dugaire=dugaire.dugaire:main"]},
 )

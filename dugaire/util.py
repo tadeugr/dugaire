@@ -20,6 +20,16 @@ def string_is_latest_or_version(check_string):
 
     return True
 
+def is_valid_version(version):
+    """Check version format is valid."""
+
+    prog = re.compile("^(\d+\.)?(\d+\.)?(\*|\d+)$")
+    match_semantic_version = prog.match(version)
+
+    if version != "latest" and not match_semantic_version:
+        return False
+
+    return True
 
 def get_template(file_name, searchpath=f"{HERE}/templates"):
     """ Load and return a Jinja template file. """

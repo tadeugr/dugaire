@@ -1,16 +1,20 @@
 requirements:
 	pip install -r requirements.txt
 
+requirements-dev:
+	pip install -r requirements-dev.txt
+
 install:
 	make requirements
 	pip install . --force
 
 install-dev:
 	make requirements
+	make requirements-dev
 	pip install --editable . --force
 
 test:
-	pytest
+	pytest --disable-pytest-warnings
 
 setup:
 	python setup.py sdist bdist_wheel
