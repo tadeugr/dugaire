@@ -312,6 +312,10 @@ def rmi(image_):
     client = docker.from_env()
 
     images = client.images.list(filters={"label": [util.get_dugaire_image_label()]})
+    if len(images) == 0:
+        click.echo("No images built with dugaire found")
+        exit(0)
+
     for docker_image in images:
         if "all" not in image_ and docker_image.id not in image_:
             continue
