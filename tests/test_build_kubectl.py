@@ -13,8 +13,6 @@ sys.path.insert(1, f"{HERE}/../dugaire")
 
 """ Import custom modules. """
 
-import dugaire
-import info
 import common
 
 

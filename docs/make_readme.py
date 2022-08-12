@@ -21,7 +21,6 @@ sys.path.insert(1, f"{HERE}/../")
 
 """ Import custom modules. """
 
-from dugaire import info
 from dugaire import util
 
 

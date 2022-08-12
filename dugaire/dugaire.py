@@ -21,17 +21,17 @@ sys.path.insert(0, f"{HERE}")
 
 """ Import custom modules. """
 
+from pkg.my_app import my_app
 from pkg.my_util import my_util
 from pkg.my_docker import my_docker
 from pkg.my_apt import my_apt
 from pkg.my_pip3 import my_pip3
 
-import info
 import util
 
 
 @click.group()
-@click.version_option(info.get_version(), message="%(version)s")
+@click.version_option(my_app.get_version(), message="%(version)s")
 def cli():
     """CLI tool to build and manage custom Docker images."""
     pass
@@ -41,7 +41,7 @@ def cli():
 def version():
     """Show the version and exit."""
 
-    click.echo(info.get_version())
+    click.echo(my_app.get_version())
 
 
 @cli.command()
@@ -265,7 +265,7 @@ def build(
 )
 def list_(short):
     client = docker.from_env()
-    images = client.images.list(filters={"label": [util.get_dugaire_image_label()]})
+    images = client.images.list(filters = { "label" : util.get_dugaire_image_label()}, all=True)
 
     if not len(images):
         click.echo("No images built with dugaire found.")
@@ -313,18 +313,23 @@ def rmi(image_):
 
     client = docker.from_env()
 
-    built_images = client.images.list(filters={"label": [util.get_dugaire_image_label()]})
-    if len(built_images) == 0:
+    # built_images = client.images.list(filters={"label": [util.get_dugaire_image_label()]})
+    images_built_with_dugaire = my_docker.list_images()
+    if len(images_built_with_dugaire) == 0:
         click.echo("No images built with dugaire found.")
         exit(0)
 
-    for built_image in built_images:
-        for img_ in image_:
-            if img_ in built_image.id or "all" in image_:
-                client.images.remove(image=built_image.id, force=True)
-                click.echo(f"Deleted: {my_docker.get_image_short_id(built_image.id)}")
+    if "all" in image_:
+        image_ = images_built_with_dugaire
 
-    sys.exit(0)
+    # Iterate image ID arguments
+    for img_ in image_:
+        if img_ not in images_built_with_dugaire.keys() and img_ != "all":
+            click.echo(f"{img_} was not built with dugaire. Skipping...")
+            continue
+
+        my_docker.remove_image(img_)
+        click.echo(f"Deleted: {img_}")
 
 def patch_click() -> None:
     """Fix Click ASCII encoding issue."""

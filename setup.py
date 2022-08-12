@@ -12,15 +12,15 @@ HERE = os.path.dirname(os.path.realpath(__file__))
 
 sys.path.insert(1, f"{HERE}/dugaire")
 
-import info
+from pkg.my_app import my_app 
 
 # REAME content
 README = open(os.path.join(HERE, "README.md")).read()
 REQUIREMENTS = open(os.path.join(HERE, "requirements.txt")).read().splitlines()
 
 setup(
-    name=info.get_prog_name(),
-    version=info.get_version(),
+    name=my_app.get_prog_name(),
+    version=my_app.get_version(),
     description="Build Docker images with custom packages for local development, testing and daily tasks.",
     long_description=README,
     long_description_content_type="text/markdown",

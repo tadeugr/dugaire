@@ -12,7 +12,7 @@ sys.path.insert(1, f"{HERE}/../dugaire")
 """ Import custom modules. """
 
 import dugaire
-import info
+from pkg.my_app import my_app
 import common
 
 _BUILT_IMAGES = []
@@ -32,7 +32,7 @@ def test_version_parameter():
     """Test command: dugaire --version"""
 
     result = common.cli("--version")
-    info_version = info.get_version()
+    info_version = my_app.get_version()
     assert info_version == result
 
 
@@ -40,7 +40,7 @@ def test_version_command():
     """Test command: dugaire version"""
 
     result = common.cli("version")
-    info_version = info.get_version()
+    info_version = my_app.get_version()
     assert info_version == result
 
 
@@ -56,52 +56,50 @@ def test_build_default():
 
     _BUILT_IMAGES.append(result)
 
+def test_build_random_name_output_image():
+    global _BUILT_IMAGES
 
-# def test_build_output_image_id():
-#     global _BUILT_IMAGES
+    cmd = ""
+    cmd += "build --output=image.name"
 
-#     cmd = ""
-#     cmd += "build --output=image.id"
+    result = common.cli(cmd)
 
-#     result = common.cli(cmd)
+    assert 21 == len(result)
 
-#     assert 71 == len(result)
+    _BUILT_IMAGES.append(result)
 
-#     _BUILT_IMAGES.append(result)
+def test_build_name_output_image_id():
+    global _BUILT_IMAGES
 
+    cmd = ""
+    cmd += "build --name=test_build_name_output_image_id --output=image.id"
 
-# def test_build_output_image_name():
-#     global _BUILT_IMAGES
+    result = common.cli(cmd)
 
-#     cmd = ""
-#     cmd += "build --output=image.name"
+    assert 71 == len(result)
 
-#     result = common.cli(cmd)
-
-#     assert 21 == len(result)
-
-#     _BUILT_IMAGES.append(result)
+    _BUILT_IMAGES.append(result)
 
 
-# def test_build_output_dockerfile():
-#     global _BUILT_IMAGES
+def test_build_output_dockerfile():
+    global _BUILT_IMAGES
 
-#     cmd = ""
-#     cmd += "build --output=dockerfile --dry-run"
+    cmd = ""
+    cmd += "build --name=test_build_output_dockerfile --output=dockerfile --dry-run"
 
-#     result = common.cli(cmd)
+    result = common.cli(cmd)
 
-#     assert "LABEL builtwith" in result
+    assert "LABEL builtwith" in result
 
 
-# def test_list_short():
+def test_list_short():
 
-#     cmd = f"list --short"
+    cmd = f"list --short"
 
-#     result = common.cli(cmd)
+    result = common.cli(cmd)
 
-#     assert "Image ID:" in result
-#     assert "Image tags:" in result
+    assert "Image ID:" in result
+    assert "Image tags:" in result
 
 
 # def test_remove_image():
@@ -112,7 +110,7 @@ def test_build_default():
 
 #     result = common.cli(cmd)
 
-#     assert f"{_BUILT_IMAGES[0]}" in result
+#     assert f"Deleted: {_BUILT_IMAGES[0]}" in result
 
 
 # def test_remove_all():
