@@ -14,6 +14,7 @@ import re
 import click_completion
 import urllib.request
 from io import BytesIO
+from rich import inspect
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, f"{HERE}")
@@ -21,6 +22,7 @@ sys.path.insert(0, f"{HERE}")
 """ Import custom modules. """
 
 from pkg.my_util import my_util
+from pkg.my_docker import my_docker
 from pkg.my_apt import my_apt
 from pkg.my_pip3 import my_pip3
 
@@ -311,16 +313,16 @@ def rmi(image_):
 
     client = docker.from_env()
 
-    images = client.images.list(filters={"label": [util.get_dugaire_image_label()]})
-    if len(images) == 0:
-        click.echo("No images built with dugaire found")
+    built_images = client.images.list(filters={"label": [util.get_dugaire_image_label()]})
+    if len(built_images) == 0:
+        click.echo("No images built with dugaire found.")
         exit(0)
 
-    for docker_image in images:
-        if "all" not in image_ and docker_image.id not in image_:
-            continue
-        click.echo(f"Deleted: {docker_image.id}")
-        client.images.remove(image=docker_image.id, force=True)
+    for built_image in built_images:
+        for img_ in image_:
+            if img_ in built_image.id or "all" in image_:
+                client.images.remove(image=built_image.id, force=True)
+                click.echo(f"Deleted: {my_docker.get_image_short_id(built_image.id)}")
 
     sys.exit(0)
 

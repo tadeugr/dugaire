@@ -19,6 +19,7 @@ import common
 
 
 def cli(cmd):
+    print(f"Running: dugaire {cmd}")
     result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
     result = result.output.strip()
     return result
