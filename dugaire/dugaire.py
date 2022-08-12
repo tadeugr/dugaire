@@ -20,6 +20,10 @@ sys.path.insert(0, f"{HERE}")
 
 """ Import custom modules. """
 
+from pkg.my_util import my_util
+from pkg.my_apt import my_apt
+from pkg.my_pip3 import my_pip3
+
 import info
 import util
 
@@ -59,12 +63,14 @@ def version():
 )
 @click.option(
     "--apt",
+    "apt_",
     help="Comma separeted list of packages (no blank space) to install using apt-get install. Requires a base image with apt-get. Example: -apt=curl,vim",
     metavar="<pkg01|pkg01,pkg02>",
     required=False,
 )
 @click.option(
     "--pip3",
+    "pip3_",
     help="Comma separeted list of packages (no blank space) to install using pip3 install. WARNING: requires -apt=python3-pip. Example: -apt=python3-pip -pip3=ansible,jinja2",
     metavar="<pkg01|pkg01,pkg02>",
     required=False,
@@ -72,12 +78,6 @@ def version():
 @click.option(
     "--with-kubectl",
     help="Install kubectl. Examples: --with-kubectl=latest / --with-kubectl=1.17.0",
-    metavar="<latest|semantic versioning>",
-    required=False,
-)
-@click.option(
-    "--with-terraform",
-    help="Install Terraform. Examples: --with-terraform=latest / --with-terraform=0.15.5",
     metavar="<latest|semantic versioning>",
     required=False,
 )
@@ -116,10 +116,9 @@ def version():
 def build(
     from_,
     name,
-    apt,
-    pip3,
+    apt_,
+    pip3_,
     with_kubectl,
-    with_terraform,
     with_velero,
     force,
     dry_run,
@@ -147,31 +146,21 @@ def build(
 
     dockerfile = ""
 
-    template = util.get_template("base.j2")
+    template = util.get_template("base.j2")    
     dockerfile += template.render(
         from_=from_, label=util.get_dugaire_image_label("dockerfile")
     )
 
-    if apt:
-        packages = apt.replace(",", " ")
-        template = util.get_template("apt.j2")
-        dockerfile += template.render(packages=packages)
+    if apt_:
+        dockerfile += my_apt.make_dockerfile(apt_)
 
-    if pip3:
-        dependency_list = {}
-        # dependency_list["azure-cli"] = ["gcc", "python3-dev"]
+    if pip3_:
+        # Ensure install python3-pip
+        apt_python3_pip = "python3-pip"
+        if not apt_ or apt_python3_pip not in apt_:
+            dockerfile += my_apt.make_dockerfile(apt_python3_pip)
 
-        pip3_install = pip3.split(",")
-        for package in pip3_install:
-            package_name = package.split("==")[0]
-            if package_name in dependency_list:
-                dependency = " ".join(dependency_list[package_name])
-                apt_template = util.get_template("apt.j2")
-                dockerfile += apt_template.render(packages=dependency)
-
-        packages = " ".join(pip3_install)
-        template = util.get_template("pip3.j2")
-        dockerfile += template.render(packages=packages)
+        dockerfile += my_pip3.make_dockerfile(pip3_)
 
     if with_kubectl:
         current_option_name = "--with-kubectl"
@@ -186,39 +175,8 @@ def build(
             exc_msg += f"Examples: {example_msg}"
             raise click.BadOptionUsage(current_option_name, exc_msg)
 
-        dependency_list = {}
-        dependency_list = ["curl", "ca-certificates"]
-        dependency = " ".join(dependency_list)
-
-        apt_template = util.get_template("apt.j2")
-        dockerfile += apt_template.render(packages=dependency)
-
-        url = "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-        if with_kubectl != "latest":
-            url = f"https://storage.googleapis.com/kubernetes-release/release/v{with_kubectl}/bin/linux/amd64/kubectl"
-
-        template = util.get_template("with_kubectl.j2")
-        dockerfile += template.render(url=url)
-
-    if with_terraform:
-        current_option_name = "--with-terraform"
-        current_option_value = with_terraform
-
-        if not util.is_valid_version(current_option_value):
-            usage_msg = f"{current_option_name}=<latest | semantic versioning>"
-            example_msg = f"{current_option_name}=latest | {current_option_name}=1.17.0"
-
-            exc_msg = f"Bad usage {current_option_name}={current_option_value} \n"
-            exc_msg += f"Valid usage: {usage_msg} \n"
-            exc_msg += f"Examples: {example_msg}"
-            raise click.BadOptionUsage(current_option_name, exc_msg)
-
-        dependency_list = {}
-        dependency_list = ["curl", "ca-certificates"]
-        dependency = " ".join(dependency_list)
-
-        apt_template = util.get_template("apt.j2")
-        dockerfile += apt_template.render(packages=dependency)
+        # Ensure dependencies
+        dockerfile += my_apt.make_dockerfile("curl,ca-certificates")
 
         url = "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
         if with_kubectl != "latest":
@@ -250,12 +208,7 @@ def build(
             exc_msg += f"Examples: {example_msg}"
             raise click.BadOptionUsage(current_option_name, exc_msg)
 
-        dependency_list = {}
-        dependency_list = ["wget"]
-        dependency = " ".join(dependency_list)
-
-        apt_template = util.get_template("apt.j2")
-        dockerfile += apt_template.render(packages=dependency)
+        dockerfile += my_apt.make_dockerfile("wget")
 
         if with_velero == "latest":
             import urllib.request
@@ -328,27 +281,44 @@ def list_(short):
     click.echo(f"-----------")
 
 
-@cli.command(help="Remove images built with dugaire.")
-@click.option(
-    "--image",
-    help="Comma separated list of Image IDs.",
+@cli.command()
+@click.argument(
+    "image_",
     required=True,
-    metavar="<Image ID|all>",
+    nargs=-1,
+    metavar="image",
 )
-def remove(image):
+def rmi(image_):
+    """
+    Remove images built with dugaire.
+    \n
+    Examples:
+    \n
+    Remove all images.
+    \n
+    $ dugaire rmi all
+    \n
+    Remove an image by image ID.
+    \n
+    $ dugaire rmi 205f13fdada0
+    \n
+    Remove multiple images by image ID.
+    \n
+    $ dugaire rmi 205f13fdada0 758581506147
+    \n
+
+    """
+
     client = docker.from_env()
 
-    if image == "all":
-        images = client.images.list(filters={"label": [util.get_dugaire_image_label()]})
-        for docker_image in images:
-            client.images.remove(image=docker_image.id, force=True)
+    images = client.images.list(filters={"label": [util.get_dugaire_image_label()]})
+    for docker_image in images:
+        if "all" not in image_ and docker_image.id not in image_:
+            continue
+        click.echo(f"Deleted: {docker_image.id}")
+        client.images.remove(image=docker_image.id, force=True)
 
-        click.echo("Images removed.")
-        sys.exit(0)
-
-    client.images.remove(image=image, force=True)
-    click.echo("Image removed.")
-
+    sys.exit(0)
 
 def patch_click() -> None:
     """Fix Click ASCII encoding issue."""
