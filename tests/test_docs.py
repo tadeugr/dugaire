@@ -17,4 +17,4 @@ def test_make_readme():
 
     result = make_readme.make()
 
-    assert f"Base image (used in Dockerfile FROM)" in result
+    assert f"Quickly build custom Docker images" in result
