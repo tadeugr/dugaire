@@ -120,6 +120,9 @@ Usage
      --with-kubectl <latest|semantic versioning>
                                      Install kubectl. Examples: --with-
                                      kubectl=latest / --with-kubectl=1.17.0
+     --with-terraform <latest|semantic versioning>
+                                     Install terrafom. Examples: --with-
+                                     terraform=latest / --with-terraform=0.15.5
      --with-velero <latest|semantic versioning>
                                      Install velero. Examples: --with-
                                      velero=latest / --with-velero=1.5.2

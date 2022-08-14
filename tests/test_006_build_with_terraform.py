@@ -26,9 +26,7 @@ def test_from_ubuntu_20_04_with_terraform_latest():
     image_id = common.dugaire_cli(cmd)
     assert len(image_id) == 12
 
-    docker_run_output = common.docker_run(
-        image_id, "terraform --version -json"
-    )
+    docker_run_output = common.docker_run(image_id, "terraform --version -json")
     docker_run_output = json.loads(docker_run_output)
 
     assert "terraform_version" in docker_run_output
@@ -44,9 +42,7 @@ def test_from_ubuntu_20_04_with_terraform_0_15_5():
     image_id = common.dugaire_cli(cmd)
     assert len(image_id) == 12
 
-    docker_run_output = common.docker_run(
-        image_id, "terraform --version -json"
-    )
+    docker_run_output = common.docker_run(image_id, "terraform --version -json")
     docker_run_output = json.loads(docker_run_output)
 
     assert "0.15.5" == docker_run_output["terraform_version"]

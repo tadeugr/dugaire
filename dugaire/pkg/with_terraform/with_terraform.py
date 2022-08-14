@@ -26,7 +26,9 @@ def make_dockerfile(version) -> str:
     dockerfile = apt.make_dockerfile("wget,unzip")
 
     if version == "latest":
-        check_terraform_json = http.get("https://checkpoint-api.hashicorp.com/v1/check/terraform")
+        check_terraform_json = http.get(
+            "https://checkpoint-api.hashicorp.com/v1/check/terraform"
+        )
         check_terraform = json.loads(check_terraform_json)
         version = check_terraform["current_version"]
 
