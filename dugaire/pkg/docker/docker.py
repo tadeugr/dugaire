@@ -9,7 +9,7 @@ from subprocess import run
 HERE = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, f"{HERE}")
 
-from pkg.my_util import my_util
+from pkg.util import util
 
 template_loader = jinja2.FileSystemLoader(searchpath=f"{HERE}/template")
 template_env = jinja2.Environment(loader=template_loader)
@@ -21,7 +21,7 @@ _client = docker.from_env()
 def make_dockerfile(from_) -> str:
 
     dockerfile = template.render(
-        from_=from_, label=my_util.get_dugaire_image_label("dockerfile")
+        from_=from_, label=util.get_dugaire_image_label("dockerfile")
     )
     return dockerfile
 
@@ -36,7 +36,7 @@ def get_image_short_id(image_id) -> str:
 def list_images():
 
     images = _client.images.list(
-        filters={"label": my_util.get_dugaire_image_label()}, all=True
+        filters={"label": util.get_dugaire_image_label()}, all=True
     )
     image_list = {}
     for image in images:

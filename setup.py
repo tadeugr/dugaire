@@ -13,15 +13,15 @@ sys.path.insert(1, f"{HERE}/dugaire")
 
 # Import custom modules.
 
-from pkg.my_app import my_app
+from pkg.app import app
 
 # REAME content
 README = open(os.path.join(HERE, "README.md")).read()
 REQUIREMENTS = open(os.path.join(HERE, "requirements.txt")).read().splitlines()
 
 setup(
-    name=my_app.get_prog_name(),
-    version=my_app.get_version(),
+    name=app.get_prog_name(),
+    version=app.get_version(),
     description="Build Docker images with custom packages for local development, testing and daily tasks.",
     long_description=README,
     long_description_content_type="text/markdown",

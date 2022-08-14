@@ -74,27 +74,6 @@ You should have the command available.
 dugaire build --help
 ```
 
-# Enable autocomplete 
-
-To enable autocomplete for your current terminal session, run:
-
-```
-eval "$(_DUGAIRE_COMPLETE=source dugaire)"
-```
-*Follow the instructions bellow to permanently enable autocomplete.*
-
-## bash
-
-```
-echo 'eval "$(_DUGAIRE_COMPLETE=source dugaire)"' >> ~/.bashrc
-```
-
-## zsh
-
-```
-echo 'eval "$(_DUGAIRE_COMPLETE=source dugaire)"' >> ~/.zshrc
-```
-
 # Usage
 
 ```
@@ -145,15 +124,38 @@ Options:
 
 ```
 
+# Enable autocomplete 
+
+To enable autocomplete for your current terminal session, run:
+
+```
+eval "$(_DUGAIRE_COMPLETE=source dugaire)"
+```
+*Follow the instructions bellow to permanently enable autocomplete.*
+
+## bash
+
+```
+echo 'eval "$(_DUGAIRE_COMPLETE=source dugaire)"' >> ~/.bashrc
+```
+
+## zsh
+
+```
+echo 'eval "$(_DUGAIRE_COMPLETE=source dugaire)"' >> ~/.zshrc
+```
+
 # Supported features
 
 ## Base images
 
-| Distro        | Tested with                                  |
-| ------------- |:--------------------------------------------:|
-| ubuntu        | `ubuntu:18.04` `ubuntu:20.04` |
+Tested with:
 
-*You may use base images that were built from the tested images.*
+- `ubuntu:20.04`
+
+- `ubuntu:18.04`
+
+> You may use base images that were built from the tested images.
 
 ## Package/Dependency managers
 
@@ -162,8 +164,6 @@ Options:
 You can install any package using `apt`. Use a comma separated (no blank space) list of packages you want to install. Example: `--apt=wget,iputils-ping`.
 
 ### pip3
-
-**WARNING** to use `pip3` you must explicitly install `pip3` using `apt`: `--apt=python3-pip`.
 
 You can install any package using `pip3`. Use a comma separated (no blank space) list of packages you want to install. Example: `--pip3=jinja2,pyyaml`. 
 
@@ -187,7 +187,7 @@ See all versions available [here](https://github.com/kubernetes/kubectl/releases
 
 #### Covered by automated tests
 
-*You may install any version available. The commands bellow only describes versions included in the automated testsß.*
+*You may install any version available. The commands bellow only describes versions included in the automated tests.*
 
 ```
 dugaire build --from=ubuntu:20.04 --with-kubectl=latest
@@ -200,10 +200,6 @@ dugaire build --from=ubuntu:18.04 --with-kubectl=1.15.0
 ### velero
 
 Install velero.
-
-#### Requirements
-
-`--with-velero` requires `--with-kubectl`.
 
 #### Options
 
@@ -235,45 +231,6 @@ docker images -f label='builtwith=dugaire'
 ```
 docker rmi -f $(docker images -aq -f label='builtwith=dugaire')
 ```
-
-# Known issues
-
-## RuntimeError: Python 3 was configured to use ASCII as encoding for the environment
-
-If you get an error like this one:
-
-```
-RuntimeError: Click will abort further execution because Python 3 was configured to use ASCII as encoding for the environment. Consult https://click.palletsprojects.com/python3/ for mitigation steps.
-```
-
-It is because `dugaire` uses Python3 and [Click](https://github.com/pallets/click), and according to Click "in Python 3, the encoding detection is done in the interpreter, and on Linux and certain other operating systems, its encoding handling is problematic". [Read more](https://click.palletsprojects.com/en/5.x/python3/#python-3-surrogate-handling).
-
-### Solution
-
-Setup your locale correctly, for example if you want to use `en_US.UTF-8`, run:
-
-```
-apt update && apt-get -y install locales
-locale-gen --purge en_US.UTF-8
-
-export LC_ALL="en_US.UTF-8"
-export LC_CTYPE="en_US.UTF-8"
-
-# Alternatively you can run: 
-#sudo dpkg-reconfigure locales
-```
-
-Then you should be able to run `dugaire`.
-
-# Development
-
-## Requirements
-
-- `pandoc` https://pandoc.org/installing.html
-
-Create a virtualenv
-
-make install-dev
 
 # License
 

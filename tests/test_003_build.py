@@ -11,7 +11,7 @@ sys.path.insert(1, f"{HERE}/../dugaire")
 # Import custom modules.
 
 import dugaire
-from pkg.my_app import my_app
+from pkg.app import app
 import common
 
 _BUILT_IMAGES = []
@@ -24,10 +24,10 @@ def test_build_default_and_remove():
     dugaire rmi <image ID>
     """
 
-    image_id = common.cli("build")
+    image_id = common.dugaire_cli("build")
     assert 12 == len(image_id)
 
-    result = common.cli(f"rmi {image_id}")
+    result = common.dugaire_cli(f"rmi {image_id}")
     assert f"Deleted: {image_id}" in result
 
 
@@ -38,13 +38,13 @@ def test_build_pip3_and_remove():
     dugaire rmi <image ID>
     """
 
-    image_id = common.cli("build --pip3=rich")
+    image_id = common.dugaire_cli("build --pip3=rich")
     assert 12 == len(image_id)
 
     docker_run_output = common.docker_run(image_id, "python3 -m rich")
     assert "Thanks for trying out Rich" in docker_run_output
 
-    result = common.cli(f"rmi {image_id}")
+    result = common.dugaire_cli(f"rmi {image_id}")
     assert f"Deleted: {image_id}" in result
 
 
@@ -56,13 +56,13 @@ def test_build_default_and_remove_multiple():
     dugaire rmi <image ID 001> <image ID 002>
     """
 
-    image_id_001 = common.cli("build --apt=curl")
+    image_id_001 = common.dugaire_cli("build --apt=curl")
     assert 12 == len(image_id_001)
 
-    image_id_002 = common.cli("build --apt=vim")
+    image_id_002 = common.dugaire_cli("build --apt=vim")
     assert 12 == len(image_id_002)
 
-    result = common.cli(f"rmi {image_id_001} {image_id_002}")
+    result = common.dugaire_cli(f"rmi {image_id_001} {image_id_002}")
     assert f"Deleted: {image_id_001}" in result
     assert f"Deleted: {image_id_002}" in result
 
@@ -75,12 +75,12 @@ def test_build_default_and_remove_all():
     dugaire rmi all
     """
 
-    image_id_001 = common.cli("build --apt=wget")
+    image_id_001 = common.dugaire_cli("build --apt=wget")
     assert 12 == len(image_id_001)
 
-    image_id_002 = common.cli("build --apt=nano")
+    image_id_002 = common.dugaire_cli("build --apt=nano")
     assert 12 == len(image_id_002)
 
-    result = common.cli(f"rmi all")
+    result = common.dugaire_cli(f"rmi all")
     assert f"Deleted: {image_id_001}" in result
     assert f"Deleted: {image_id_002}" in result

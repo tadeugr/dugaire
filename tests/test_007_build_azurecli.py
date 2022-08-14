@@ -28,7 +28,7 @@ def test_from_ubuntu20_04_pkg_latest():
     pkg = "azure-cli"
 
     cmd = f"build --from={from_} --apt=python3-pip --pip3={pkg}"
-    image_id = common.cli(cmd)
+    image_id = common.dugaire_cli(cmd)
     assert len(image_id) == 12
 
     docker_run_output = common.docker_run(image_id, "az version --output=json")
@@ -48,7 +48,7 @@ def test_from_ubuntu20_04_pkg_2_39_0():
 
     cmd = f'build --from={from_} --apt=python3-pip --pip3="{pkg}"'
 
-    image_id = common.cli(cmd)
+    image_id = common.dugaire_cli(cmd)
     assert len(image_id) == 12
 
     docker_run_output = common.docker_run(image_id, "az version --output=json")

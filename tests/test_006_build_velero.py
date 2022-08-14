@@ -25,7 +25,7 @@ def test_from_ubuntu_20_04_bad_usage():
     """
 
     cmd = f"build --from=ubuntu:20.04 --with-velero=this.is.invalid"
-    result = common.cli(cmd)
+    result = common.dugaire_cli(cmd)
     assert f"Invalid value" in result
 
 
@@ -36,7 +36,7 @@ def test_from_ubuntu_20_04_pkg_latest():
     """
 
     cmd = f"build --from=ubuntu:20.04 --with-kubectl=latest --with-velero=latest"
-    image_id = common.cli(cmd)
+    image_id = common.dugaire_cli(cmd)
     assert len(image_id) == 12
 
     docker_run_output = common.docker_run(
@@ -60,7 +60,7 @@ def test_from_ubuntu_20_04_pkg_version():
     kubectl_version = "1.17.0"
     velero_version = "1.5.2"
     cmd = f"build --from=ubuntu:20.04 --with-kubectl={kubectl_version} --with-velero={velero_version}"
-    image_id = common.cli(cmd)
+    image_id = common.dugaire_cli(cmd)
     assert len(image_id) == 12
 
     docker_run_output = common.docker_run(

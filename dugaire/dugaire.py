@@ -5,7 +5,7 @@
 import os
 from platform import platform
 import sys
-import docker
+import docker as docker_py
 import click
 import uuid
 import click_completion
@@ -18,32 +18,32 @@ sys.path.insert(0, f"{HERE}")
 
 # Import custom modules.
 
-from pkg.my_app import my_app
-from pkg.my_cli import my_cli
-from pkg.my_util import my_util
-from pkg.my_docker import my_docker
-from pkg.my_apt import my_apt
-from pkg.my_pip3 import my_pip3
+from pkg.app import app
+from pkg.cli import cli
+from pkg.util import util
+from pkg.docker import docker
+from pkg.apt import apt
+from pkg.pip3 import pip3
 from pkg.with_kubectl import with_kubectl
 from pkg.with_velero import with_velero
 
 
 @click.group()
-@click.version_option(my_app.get_version(), message="%(version)s")
-def cli():
+@click.version_option(app.get_version(), message="%(version)s")
+def cli_():
     """CLI tool to build and manage custom Docker images."""
 
     pass
 
 
-@cli.command()
+@cli_.command()
 def version():
     """Show the version and exit."""
 
-    click.echo(my_app.get_version())
+    click.echo(app.get_version())
 
 
-@cli.command()
+@cli_.command()
 @click.option(
     "--from",
     "from_",
@@ -82,7 +82,7 @@ def version():
     help="Install kubectl. Examples: --with-kubectl=latest / --with-kubectl=1.17.0",
     metavar="<latest|semantic versioning>",
     required=False,
-    callback=my_cli.is_version_valid,
+    callback=cli.is_version_valid,
 )
 @click.option(
     "--with-velero",
@@ -90,7 +90,7 @@ def version():
     help="Install velero. Examples: --with-velero=latest / --with-velero=1.5.2",
     metavar="<latest|semantic versioning>",
     required=False,
-    callback=my_cli.is_version_valid,
+    callback=cli.is_version_valid,
 )
 @click.option(
     "--force",
@@ -154,20 +154,20 @@ def build(
     dockerfile = ""
 
     # Dockerfile: base image
-    dockerfile += my_docker.make_dockerfile(from_)
+    dockerfile += docker.make_dockerfile(from_)
 
     # Dockerfile: install packages using apt-get
     if apt_:
-        dockerfile += my_apt.make_dockerfile(apt_)
+        dockerfile += apt.make_dockerfile(apt_)
 
     # Dockerfile: install packages using pip3
     if pip3_:
         # Ensure install python3-pip
         apt_python3_pip = "python3-pip"
         if not apt_ or apt_python3_pip not in apt_:
-            dockerfile += my_apt.make_dockerfile(apt_python3_pip)
+            dockerfile += apt.make_dockerfile(apt_python3_pip)
 
-        dockerfile += my_pip3.make_dockerfile(pip3_)
+        dockerfile += pip3.make_dockerfile(pip3_)
 
     # Dockerfile: install kubectl
     if with_kubectl_:
@@ -189,7 +189,7 @@ def build(
     image_name = None
     if not dry_run:
         f = BytesIO(dockerfile.encode("utf-8"))
-        client = docker.from_env()
+        client = docker_py.from_env()
         image_name = name
         if image_name == "random":
             random_name = str(uuid.uuid4())[:8]
@@ -212,7 +212,7 @@ def build(
         click.echo(image_name)
 
 
-@cli.command("list", help="List images built with dugaire.")
+@cli_.command("list", help="List images built with dugaire.")
 @click.option(
     "--short/--not-short",
     "-s",
@@ -233,9 +233,9 @@ def list_(short):
     dugaire list --no-short
     """
 
-    client = docker.from_env()
+    client = docker_py.from_env()
     images = client.images.list(
-        filters={"label": my_util.get_dugaire_image_label()}, all=True
+        filters={"label": util.get_dugaire_image_label()}, all=True
     )
 
     if not len(images):
@@ -254,7 +254,7 @@ def list_(short):
     click.echo(f"-----------")
 
 
-@cli.command()
+@cli_.command()
 @click.argument(
     "image_",
     required=True,
@@ -282,7 +282,7 @@ def rmi(image_):
 
     """
 
-    images_built_with_dugaire = my_docker.list_images()
+    images_built_with_dugaire = docker.list_images()
     if len(images_built_with_dugaire) == 0:
         click.echo("No images built with dugaire found.")
         exit(0)
@@ -296,7 +296,7 @@ def rmi(image_):
             click.echo(f"{img_} was not built with dugaire. Skipping...")
             continue
 
-        my_docker.remove_image(img_)
+        docker.remove_image(img_)
         click.echo(f"Deleted: {img_}")
 
 
@@ -304,7 +304,7 @@ def main():
     """Main function executed by the CLI command."""
 
     click_completion.init()
-    cli()
+    cli_()
 
 
 if __name__ == "__main__":

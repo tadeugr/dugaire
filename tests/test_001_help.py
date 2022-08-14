@@ -21,5 +21,5 @@ def test_help():
     dugaire --help
     """
 
-    result = common.cli("--help")
+    result = common.dugaire_cli("--help")
     assert "CLI tool to build and manage custom Docker images." in result

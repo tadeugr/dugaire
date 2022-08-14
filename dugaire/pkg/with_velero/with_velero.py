@@ -12,7 +12,7 @@ HERE = os.path.dirname(os.path.realpath(__file__))
 APP_ROOT = os.path.join(HERE, "../", "../")
 sys.path.insert(1, f"{APP_ROOT}")
 
-from pkg.my_apt import my_apt
+from pkg.apt import apt
 
 template_loader = jinja2.FileSystemLoader(searchpath=f"{HERE}/template")
 template_env = jinja2.Environment(loader=template_loader)
@@ -22,7 +22,7 @@ template = template_env.get_template("velero.dockerfile.j2")
 def make_dockerfile(version) -> str:
 
     # Ensure dependencies
-    dockerfile = my_apt.make_dockerfile("wget")
+    dockerfile = apt.make_dockerfile("wget")
 
     if version == "latest":
         response = urllib.request.urlopen(

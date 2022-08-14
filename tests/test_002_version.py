@@ -13,7 +13,7 @@ sys.path.insert(1, f"{HERE}/../dugaire")
 
 # Import custom modules.
 
-from pkg.my_app import my_app
+from pkg.app import app
 import common
 
 
@@ -23,8 +23,8 @@ def test_version_parameter():
     dugaire --version
     """
 
-    result = common.cli("--version")
-    info_version = my_app.get_version()
+    result = common.dugaire_cli("--version")
+    info_version = app.get_version()
     assert info_version == result
 
 
@@ -34,6 +34,6 @@ def test_version_command():
     dugaire version
     """
 
-    result = common.cli("version")
-    info_version = my_app.get_version()
+    result = common.dugaire_cli("version")
+    info_version = app.get_version()
     assert info_version == result
