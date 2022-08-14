@@ -1,0 +1,5 @@
+# terraform
+RUN wget https://releases.hashicorp.com/terraform/{{version}}/terraform_{{version}}_linux_amd64.zip
+RUN unzip terraform_{{version}}_linux_amd64.zip
+RUN mv terraform /usr/local/bin/
+{# EOF #}

@@ -25,6 +25,7 @@ from pkg.docker import docker
 from pkg.apt import apt
 from pkg.pip3 import pip3
 from pkg.with_kubectl import with_kubectl
+from pkg.with_terraform import with_terraform
 from pkg.with_velero import with_velero
 
 
@@ -85,6 +86,14 @@ def version():
     callback=cli.is_version_valid,
 )
 @click.option(
+    "--with-terraform",
+    "with_terraform_",
+    help="Install terrafom. Examples: --with-terraform=latest / --with-terraform=0.15.5",
+    metavar="<latest|semantic versioning>",
+    required=False,
+    callback=cli.is_version_valid,
+)
+@click.option(
     "--with-velero",
     "with_velero_",
     help="Install velero. Examples: --with-velero=latest / --with-velero=1.5.2",
@@ -126,6 +135,7 @@ def build(
     apt_,
     pip3_,
     with_kubectl_,
+    with_terraform_,
     with_velero_,
     force,
     dry_run,
@@ -172,6 +182,10 @@ def build(
     # Dockerfile: install kubectl
     if with_kubectl_:
         dockerfile += with_kubectl.make_dockerfile(with_kubectl_)
+
+    # Dockerfile: install terraform
+    if with_terraform_:
+        dockerfile += with_terraform.make_dockerfile(with_terraform_)
 
     # Dockerfile: install velero
     if with_velero_:
