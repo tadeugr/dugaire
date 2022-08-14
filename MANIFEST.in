@@ -1,1 +1,5 @@
-include dugaire/templates/*.j2
+include dugaire/pkg/with_kubectl/template/*.j2
+include dugaire/pkg/my_docker/template/*.j2
+include dugaire/pkg/with_velero/template/*.j2
+include dugaire/pkg/my_pip3/template/*.j2
+include dugaire/pkg/my_apt/template/*.j2

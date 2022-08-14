@@ -1,5 +1,6 @@
 import os
 import sys
+import jinja2
 import docker
 from subprocess import run
 
@@ -8,8 +9,18 @@ sys.path.insert(0, f"{HERE}")
 
 from pkg.my_util import my_util
 
+template_loader = jinja2.FileSystemLoader(searchpath=f"{HERE}/template")
+template_env = jinja2.Environment(loader=template_loader)
+template = template_env.get_template("base.dockerfile.j2")
+
 _client = docker.from_env()
 
+def make_dockerfile(from_) -> str:
+    
+    dockerfile = template.render(
+        from_=from_, label=my_util.get_dugaire_image_label("dockerfile")
+    )
+    return dockerfile
 
 def get_image_short_id(image_id) -> str:
     """Get 12-character image id."""

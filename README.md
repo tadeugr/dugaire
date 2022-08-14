@@ -1,3 +1,6 @@
+<!---
+DO NOT EDIT README.md IT IS AUTO GENARATED
+-->
 Quickly build custom Docker images for local development without having to write Dockerfiles.
 
 ![dugaire](https://github.com/tadeugr/dugaire/blob/master/docs/assets/tty.gif?raw=true)

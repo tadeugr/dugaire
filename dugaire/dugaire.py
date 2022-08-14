@@ -2,20 +2,14 @@
 
 """ Import comunity modules. """
 
-from gc import callbacks
 import os
 from platform import platform
 import sys
 import docker
 import click
-import jinja2
-import json
 import uuid
-import re
 import click_completion
-import urllib.request
 from io import BytesIO
-from rich import inspect
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, f"{HERE}")
@@ -24,14 +18,11 @@ sys.path.insert(0, f"{HERE}")
 
 from pkg.my_app import my_app
 from pkg.my_cli import my_cli
-from pkg.my_util import my_util
 from pkg.my_docker import my_docker
 from pkg.my_apt import my_apt
 from pkg.my_pip3 import my_pip3
 from pkg.with_kubectl import with_kubectl
 from pkg.with_velero import with_velero
-
-import util
 
 
 @click.group()
@@ -158,10 +149,7 @@ def build(
 
     dockerfile = ""
 
-    template = util.get_template("base.j2")
-    dockerfile += template.render(
-        from_=from_, label=util.get_dugaire_image_label("dockerfile")
-    )
+    dockerfile += my_docker.make_dockerfile(from_)
 
     if apt_:
         dockerfile += my_apt.make_dockerfile(apt_)

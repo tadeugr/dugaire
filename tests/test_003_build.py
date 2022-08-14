@@ -27,6 +27,18 @@ def test_build_default_and_remove():
     assert f"Deleted: {image_id}" in result
 
 
+def test_build_pip3_and_remove():
+
+    image_id = common.cli("build --pip3=rich")
+    assert 12 == len(image_id)
+
+    docker_run_output = common.docker_run(image_id, "python3 -m rich")
+    assert "Thanks for trying out Rich" in docker_run_output
+
+    result = common.cli(f"rmi {image_id}")
+    assert f"Deleted: {image_id}" in result
+
+
 def test_build_default_and_remove_multiple():
 
     image_id_001 = common.cli("build --apt=curl")

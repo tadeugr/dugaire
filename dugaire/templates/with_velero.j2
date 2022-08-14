@@ -1,8 +1,0 @@
-#
-# Velero
-#
-RUN wget -q https://github.com/vmware-tanzu/velero/releases/download/v{{version}}/velero-v{{version}}-linux-amd64.tar.gz
-RUN tar -xzf velero-v{{version}}-linux-amd64.tar.gz
-RUN chmod +rx velero-v{{version}}-linux-amd64/velero
-RUN mv ./velero-v{{version}}-linux-amd64/velero /usr/local/bin/
-{# EOF #}

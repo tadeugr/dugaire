@@ -1,31 +1,25 @@
 #!/usr/bin/env python3
 
-""" Import comunity modules. """
+# Import comunity modules
 
 import os
 import sys
-import docker
-import click
 import jinja2
-import json
-import uuid
-import re
-import click_completion
-import urllib.request
 import subprocess
-from io import BytesIO
 
 HERE = os.path.dirname(os.path.realpath(__file__))
-sys.path.insert(0, f"{HERE}")
-sys.path.insert(1, f"{HERE}/../")
+APP_ROOT = os.path.join(HERE, "../", "../")
+sys.path.insert(0, HERE)
+sys.path.insert(1, APP_ROOT)
 
-""" Import custom modules. """
+# Global vars
 
-from dugaire import util
+template_loader = jinja2.FileSystemLoader(searchpath=f"{HERE}/template")
+template_env = jinja2.Environment(loader=template_loader)
+template = template_env.get_template("README.md.j2")
 
 
 def make():
-    template = util.get_template(f"README.j2", searchpath=f"{HERE}/..")
 
     result = subprocess.run(["dugaire", "build", "--help"], stdout=subprocess.PIPE)
     usage_help = result.stdout.decode("utf8")

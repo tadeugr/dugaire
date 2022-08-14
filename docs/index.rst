@@ -1,3 +1,9 @@
+.. raw:: html
+
+   <!---
+   DO NOT EDIT README.md IT IS AUTO GENARATED
+   -->
+
 Quickly build custom Docker images for local development without having
 to write Dockerfiles.
 
