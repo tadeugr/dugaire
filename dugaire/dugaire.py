@@ -215,7 +215,7 @@ def build(
 def list_(short):
     client = docker.from_env()
     images = client.images.list(
-        filters={"label": util.get_dugaire_image_label()}, all=True
+        filters={"label": my_util.get_dugaire_image_label()}, all=True
     )
 
     if not len(images):
@@ -264,7 +264,6 @@ def rmi(image_):
 
     client = docker.from_env()
 
-    # built_images = client.images.list(filters={"label": [util.get_dugaire_image_label()]})
     images_built_with_dugaire = my_docker.list_images()
     if len(images_built_with_dugaire) == 0:
         click.echo("No images built with dugaire found.")
