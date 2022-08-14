@@ -2,6 +2,7 @@
 
 """ Import comunity modules. """
 
+from gc import callbacks
 import os
 from platform import platform
 import sys
@@ -22,10 +23,12 @@ sys.path.insert(0, f"{HERE}")
 """ Import custom modules. """
 
 from pkg.my_app import my_app
+from pkg.my_cli import my_cli
 from pkg.my_util import my_util
 from pkg.my_docker import my_docker
 from pkg.my_apt import my_apt
 from pkg.my_pip3 import my_pip3
+from pkg.with_kubectl import with_kubectl
 
 import util
 
@@ -79,9 +82,11 @@ def version():
 )
 @click.option(
     "--with-kubectl",
+    "with_kubectl_",
     help="Install kubectl. Examples: --with-kubectl=latest / --with-kubectl=1.17.0",
     metavar="<latest|semantic versioning>",
     required=False,
+    callback=my_cli.is_version_valid
 )
 @click.option(
     "--with-velero",
@@ -107,6 +112,8 @@ def version():
 )
 @click.option(
     "--output",
+    "-o",
+    "output_",
     help="Command output options.",
     required=False,
     default="image.id.short",
@@ -120,11 +127,11 @@ def build(
     name,
     apt_,
     pip3_,
-    with_kubectl,
+    with_kubectl_,
     with_velero,
     force,
     dry_run,
-    output,
+    output_,
 ):
     """
     Build Docker images with custom packages.
@@ -164,28 +171,8 @@ def build(
 
         dockerfile += my_pip3.make_dockerfile(pip3_)
 
-    if with_kubectl:
-        current_option_name = "--with-kubectl"
-        current_option_value = with_kubectl
-
-        if not util.string_is_latest_or_version(current_option_value):
-            usage_msg = f"{current_option_name}=<latest | semantic versioning>"
-            example_msg = f"{current_option_name}=latest | {current_option_name}=1.17.0"
-
-            exc_msg = f"Bad usage {current_option_name}={current_option_value} \n"
-            exc_msg += f"Valid usage: {usage_msg} \n"
-            exc_msg += f"Examples: {example_msg}"
-            raise click.BadOptionUsage(current_option_name, exc_msg)
-
-        # Ensure dependencies
-        dockerfile += my_apt.make_dockerfile("curl,ca-certificates")
-
-        url = "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-        if with_kubectl != "latest":
-            url = f"https://storage.googleapis.com/kubernetes-release/release/v{with_kubectl}/bin/linux/amd64/kubectl"
-
-        template = util.get_template("with_kubectl.j2")
-        dockerfile += template.render(url=url)
+    if with_kubectl_:
+        dockerfile += with_kubectl.make_dockerfile(with_kubectl_)
 
     if with_velero:
 
@@ -201,7 +188,7 @@ def build(
             exc_msg += f"Examples: {example_msg}"
             raise click.BadOptionUsage(current_option_name, exc_msg)
 
-        if not with_kubectl:
+        if not with_kubectl_:
             usage_msg = f"--with-kubectl=<latest | semantic versioning> {current_option_name}=<latest | semantic versioning>"
             example_msg = f"--with-kubectl=latest {current_option_name}=latest"
 
@@ -224,6 +211,9 @@ def build(
         template = util.get_template("with_velero.j2")
         dockerfile += template.render(version=with_velero)
 
+    if output_ == "dockerfile":
+        click.echo(dockerfile)
+
     image_id = None
     image_name = None
     if not dry_run:
@@ -243,14 +233,12 @@ def build(
         image_id = image.attrs["Id"]
         image_name = image.attrs["RepoTags"][0]
 
-    if output == "image.id":
+    if output_ == "image.id":
         click.echo(image_id)
-    if output == "image.id.short":
+    if output_ == "image.id.short":
         click.echo(image_id.replace("sha256:", "")[:12])
-    if output == "image.name":
+    if output_ == "image.name":
         click.echo(image_name)
-    if output == "dockerfile":
-        click.echo(dockerfile)
 
 
 @cli.command("list", help="List images built with dugaire.")
