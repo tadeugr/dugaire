@@ -23,10 +23,13 @@ template = template_env.get_template("README.md.j2")
 
 def make():
 
-    result = subprocess.run(["dugaire", "build", "--help"], stdout=subprocess.PIPE)
+    result = subprocess.run(["dugaire", "--help"], stdout=subprocess.PIPE)
     usage_help = result.stdout.decode("utf8")
 
-    rendered = template.render(usage_help=usage_help)
+    result = subprocess.run(["dugaire", "build", "--help"], stdout=subprocess.PIPE)
+    usage_build_help = result.stdout.decode("utf8")
+
+    rendered = template.render(usage_help=usage_help, usage_build_help=usage_build_help)
     print(rendered)
     return rendered
 

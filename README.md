@@ -77,6 +77,25 @@ dugaire build --help
 # Usage
 
 ```
+Usage: dugaire [OPTIONS] COMMAND [ARGS]...
+
+  CLI tool to build and manage custom Docker images.
+
+Options:
+  --version  Show the version and exit.
+  --help     Show this message and exit.
+
+Commands:
+  build    Build Docker images with custom packages.
+  list     List images built with dugaire.
+  rmi      Remove images built with dugaire.
+  version  Show the version and exit.
+
+```
+
+## dugaire build
+
+```
 Usage: dugaire build [OPTIONS]
 
   Build Docker images with custom packages.
@@ -176,10 +195,6 @@ You can install any package using `pip3`. Use a comma separated (no blank space)
 
 Install kubectl.
 
-#### Requirements
-
-No requirements.
-
 #### Options
 
 `--with-kubectl=latest` to install the latest version.
@@ -198,6 +213,25 @@ dugaire build --from=ubuntu:20.04 --with-kubectl=1.18.0
 dugaire build --from=ubuntu:20.04 --with-kubectl=1.17.0
 dugaire build --from=ubuntu:18.04 --with-kubectl=1.16.0
 dugaire build --from=ubuntu:18.04 --with-kubectl=1.15.0
+```
+
+### terraform
+
+#### Options
+
+`--with-terraform=latest` to install the latest version.
+
+`--with-terraform=0.15.05` *(example)* to install specific versions.
+
+See all versions available [here](https://releases.hashicorp.com/terraform/).
+
+#### Covered by automated tests
+
+*You may install any version available. The commands bellow only describes versions included in the automated tests.*
+
+```
+dugaire build --from=ubuntu:20.04 --with-terraform=latest
+dugaire build --from=ubuntu:20.04 --with-terraform=0.15.05
 ```
 
 ### velero

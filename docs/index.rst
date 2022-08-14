@@ -85,6 +85,25 @@ Usage
 
 ::
 
+   Usage: dugaire [OPTIONS] COMMAND [ARGS]...
+
+     CLI tool to build and manage custom Docker images.
+
+   Options:
+     --version  Show the version and exit.
+     --help     Show this message and exit.
+
+   Commands:
+     build    Build Docker images with custom packages.
+     list     List images built with dugaire.
+     rmi      Remove images built with dugaire.
+     version  Show the version and exit.
+
+dugaire build
+-------------
+
+::
+
    Usage: dugaire build [OPTIONS]
 
      Build Docker images with custom packages.
@@ -199,11 +218,6 @@ kubectl
 
 Install kubectl.
 
-Requirements
-^^^^^^^^^^^^
-
-No requirements.
-
 Options
 ^^^^^^^
 
@@ -228,12 +242,40 @@ describes versions included in the automated tests.*
    dugaire build --from=ubuntu:18.04 --with-kubectl=1.16.0
    dugaire build --from=ubuntu:18.04 --with-kubectl=1.15.0
 
+terraform
+~~~~~~~~~
+
+.. _options-1:
+
+Options
+^^^^^^^
+
+``--with-terraform=latest`` to install the latest version.
+
+``--with-terraform=0.15.05`` *(example)* to install specific versions.
+
+See all versions available
+`here <https://releases.hashicorp.com/terraform/>`__.
+
+.. _covered-by-automated-tests-1:
+
+Covered by automated tests
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*You may install any version available. The commands bellow only
+describes versions included in the automated tests.*
+
+::
+
+   dugaire build --from=ubuntu:20.04 --with-terraform=latest
+   dugaire build --from=ubuntu:20.04 --with-terraform=0.15.05
+
 velero
 ~~~~~~
 
 Install velero.
 
-.. _options-1:
+.. _options-2:
 
 Options
 ^^^^^^^
@@ -245,7 +287,7 @@ Options
 See all versions available
 `here <https://github.com/vmware-tanzu/velero/releases>`__.
 
-.. _covered-by-automated-tests-1:
+.. _covered-by-automated-tests-2:
 
 Covered by automated tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
