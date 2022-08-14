@@ -31,14 +31,14 @@ from pkg.with_velero import with_velero
 @click.group()
 @click.version_option(my_app.get_version(), message="%(version)s")
 def cli():
-    """ CLI tool to build and manage custom Docker images. """
+    """CLI tool to build and manage custom Docker images."""
 
     pass
 
 
 @cli.command()
 def version():
-    """ Show the version and exit. """
+    """Show the version and exit."""
 
     click.echo(my_app.get_version())
 
@@ -301,13 +301,13 @@ def rmi(image_):
 
 
 def main():
-    """ Main function executed by the CLI command. """
+    """Main function executed by the CLI command."""
 
     click_completion.init()
     cli()
 
 
 if __name__ == "__main__":
-    """ Call the main function. """
+    """Call the main function."""
 
     main()

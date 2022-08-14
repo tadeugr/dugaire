@@ -14,8 +14,9 @@ sys.path.insert(1, f"{HERE}/../docs")
 
 import make_readme
 
+
 def test_make_readme():
-    """ Compile README template. """
+    """Compile README template."""
 
     result = make_readme.make()
 

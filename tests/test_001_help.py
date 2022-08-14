@@ -14,6 +14,7 @@ sys.path.insert(1, f"{HERE}/../dugaire")
 
 import common
 
+
 def test_help():
     """
     Run:

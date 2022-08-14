@@ -17,8 +17,9 @@ sys.path.insert(1, f"{HERE}/../dugaire")
 
 import dugaire
 
+
 def cli(cmd):
-    """ Run click command. """
+    """Run click command."""
 
     print(f"Running: dugaire {cmd}")
     result = CliRunner().invoke(dugaire.cli, cmd.split(" "))
@@ -27,7 +28,7 @@ def cli(cmd):
 
 
 def docker_run(image_id, cmd):
-    """ Run docker run command. """
+    """Run docker run command."""
 
     client = docker.from_env()
     docker_run_output = client.containers.run(image_id, cmd, auto_remove=True)

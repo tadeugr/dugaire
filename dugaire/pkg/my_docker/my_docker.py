@@ -17,12 +17,14 @@ template = template_env.get_template("base.dockerfile.j2")
 
 _client = docker.from_env()
 
+
 def make_dockerfile(from_) -> str:
-    
+
     dockerfile = template.render(
         from_=from_, label=my_util.get_dugaire_image_label("dockerfile")
     )
     return dockerfile
+
 
 def get_image_short_id(image_id) -> str:
     """Get 12-character image id."""

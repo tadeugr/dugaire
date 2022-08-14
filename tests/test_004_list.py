@@ -21,7 +21,7 @@ _BUILT_IMAGES = []
 
 
 def test_list():
-    """"
+    """ "
     Run:
     dugaire build
     dugaire list
@@ -33,8 +33,9 @@ def test_list():
     result = common.cli(f"list")
     assert image_id in result
 
+
 def test_list_not_short():
-    """"
+    """ "
     Run:
     dugaire build
     dugaire list --not-short
@@ -45,4 +46,3 @@ def test_list_not_short():
 
     result = common.cli(f"list --not-short")
     assert f"sha256:{image_id}" in result
-

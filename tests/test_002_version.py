@@ -16,6 +16,7 @@ sys.path.insert(1, f"{HERE}/../dugaire")
 from pkg.my_app import my_app
 import common
 
+
 def test_version_parameter():
     """
     Run:
@@ -25,6 +26,7 @@ def test_version_parameter():
     result = common.cli("--version")
     info_version = my_app.get_version()
     assert info_version == result
+
 
 def test_version_command():
     """
