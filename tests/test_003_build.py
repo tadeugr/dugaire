@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 
-""" Import comunity modules. """
+# Import comunity modules.
 
 import os
 import sys
-from click.testing import CliRunner
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(1, f"{HERE}/../dugaire")
 
-""" Import custom modules. """
+# Import custom modules.
 
 import dugaire
 from pkg.my_app import my_app
@@ -19,6 +18,11 @@ _BUILT_IMAGES = []
 
 
 def test_build_default_and_remove():
+    """
+    Run:
+    dugaire build
+    dugaire rmi <image ID>
+    """
 
     image_id = common.cli("build")
     assert 12 == len(image_id)
@@ -28,6 +32,11 @@ def test_build_default_and_remove():
 
 
 def test_build_pip3_and_remove():
+    """
+    Run:
+    dugaire build --pip3=rich
+    dugaire rmi <image ID>
+    """
 
     image_id = common.cli("build --pip3=rich")
     assert 12 == len(image_id)
@@ -40,6 +49,12 @@ def test_build_pip3_and_remove():
 
 
 def test_build_default_and_remove_multiple():
+    """
+    Run:
+    dugaire build --apt=curl
+    dugaire build --apt=vim
+    dugaire rmi <image ID 001> <image ID 002>
+    """
 
     image_id_001 = common.cli("build --apt=curl")
     assert 12 == len(image_id_001)
@@ -53,6 +68,12 @@ def test_build_default_and_remove_multiple():
 
 
 def test_build_default_and_remove_all():
+    """
+    Run:
+    dugaire build --apt=wget
+    dugaire build --apt=nano
+    dugaire rmi all
+    """
 
     image_id_001 = common.cli("build --apt=wget")
     assert 12 == len(image_id_001)

@@ -1,9 +1,11 @@
-""" Import comunity modules. """
+# Import comunity modules.
 
 import os
 import sys
 import jinja2
 import re
+
+# Set module import path.
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 APP_ROOT = os.path.join(HERE, "../", "../")

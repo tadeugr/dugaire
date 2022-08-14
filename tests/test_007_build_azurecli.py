@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-""" Import comunity modules. """
+# Import comunity modules.
 
 import os
 import sys
@@ -8,15 +8,21 @@ import docker
 import json
 from click.testing import CliRunner
 
+# Set module import path.
+
 HERE = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(1, f"{HERE}/../dugaire")
 
-""" Import custom modules. """
+# Import custom modules.
 
 import common
 
 
 def test_from_ubuntu20_04_pkg_latest():
+    """
+    Run:
+    dugaire build --from=ubuntu:20.04 --apt=python3-pip --pip3=azure-cli
+    """
 
     from_ = "ubuntu:20.04"
     pkg = "azure-cli"
@@ -31,6 +37,10 @@ def test_from_ubuntu20_04_pkg_latest():
 
 
 def test_from_ubuntu20_04_pkg_2_39_0():
+    """
+    Run:
+    dugaire build --from=ubuntu:20.04 --apt=python3-pip --pip3=azure-cli==2.39.0
+    """
 
     from_ = "ubuntu:20.04"
     pkg_version = "2.39.0"

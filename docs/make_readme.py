@@ -7,6 +7,8 @@ import sys
 import jinja2
 import subprocess
 
+# Set module import path.
+
 HERE = os.path.dirname(os.path.realpath(__file__))
 APP_ROOT = os.path.join(HERE, "../", "../")
 sys.path.insert(0, HERE)

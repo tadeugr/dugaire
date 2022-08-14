@@ -1,10 +1,12 @@
-""" Import comunity modules. """
+# Import comunity modules.
 
 import os
 import sys
 import json
 import jinja2
 import urllib.request
+
+# Set module import path.
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 APP_ROOT = os.path.join(HERE, "../", "../")

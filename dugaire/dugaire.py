@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-""" Import comunity modules. """
+# Import comunity modules.
 
 import os
 from platform import platform
@@ -11,10 +11,12 @@ import uuid
 import click_completion
 from io import BytesIO
 
+# Set module import path.
+
 HERE = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, f"{HERE}")
 
-""" Import custom modules. """
+# Import custom modules.
 
 from pkg.my_app import my_app
 from pkg.my_cli import my_cli
@@ -29,13 +31,14 @@ from pkg.with_velero import with_velero
 @click.group()
 @click.version_option(my_app.get_version(), message="%(version)s")
 def cli():
-    """CLI tool to build and manage custom Docker images."""
+    """ CLI tool to build and manage custom Docker images. """
+
     pass
 
 
 @cli.command()
 def version():
-    """Show the version and exit."""
+    """ Show the version and exit. """
 
     click.echo(my_app.get_version())
 
@@ -150,11 +153,14 @@ def build(
 
     dockerfile = ""
 
+    # Dockerfile: base image
     dockerfile += my_docker.make_dockerfile(from_)
 
+    # Dockerfile: install packages using apt-get
     if apt_:
         dockerfile += my_apt.make_dockerfile(apt_)
 
+    # Dockerfile: install packages using pip3
     if pip3_:
         # Ensure install python3-pip
         apt_python3_pip = "python3-pip"
@@ -163,9 +169,11 @@ def build(
 
         dockerfile += my_pip3.make_dockerfile(pip3_)
 
+    # Dockerfile: install kubectl
     if with_kubectl_:
         dockerfile += with_kubectl.make_dockerfile(with_kubectl_)
 
+    # Dockerfile: install velero
     if with_velero_:
         # Ensure kubectl
         if not with_kubectl_:
@@ -173,6 +181,7 @@ def build(
 
         dockerfile += with_velero.make_dockerfile(with_velero_)
 
+    # Print dockerfile
     if output_ == "dockerfile":
         click.echo(dockerfile)
 
@@ -214,6 +223,16 @@ def build(
     is_flag=True,
 )
 def list_(short):
+    """
+    List images built with dugaire.
+    \n
+    Examples:
+    \n
+    dugaire list
+    \n
+    dugaire list --no-short
+    """
+
     client = docker.from_env()
     images = client.images.list(
         filters={"label": my_util.get_dugaire_image_label()}, all=True
@@ -263,8 +282,6 @@ def rmi(image_):
 
     """
 
-    client = docker.from_env()
-
     images_built_with_dugaire = my_docker.list_images()
     if len(images_built_with_dugaire) == 0:
         click.echo("No images built with dugaire found.")
@@ -283,29 +300,14 @@ def rmi(image_):
         click.echo(f"Deleted: {img_}")
 
 
-def patch_click() -> None:
-    """Fix Click ASCII encoding issue."""
-    try:
-        from click import core
-        from click import _unicodefun  # type: ignore
-    except ModuleNotFoundError:
-        return
-
-    for module in (core, _unicodefun):
-        if hasattr(module, "_verify_python3_env"):
-            module._verify_python3_env = lambda: None
-
-
 def main():
-    """Main function executed by the CLI command."""
+    """ Main function executed by the CLI command. """
 
-    # It seems newer click version does not require patching
-    # patch_click()
     click_completion.init()
     cli()
 
 
 if __name__ == "__main__":
-    """Call the main function."""
+    """ Call the main function. """
 
     main()

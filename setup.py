@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 
-""" Import comunity modules. """
+# Import comunity modules.
+
 import os
 import sys
 from setuptools import find_packages, setup
 
-""" Import custom modules. """
+# Set module import path.
 
-# The directory containing this file
 HERE = os.path.dirname(os.path.realpath(__file__))
-
 sys.path.insert(1, f"{HERE}/dugaire")
+
+# Import custom modules.
 
 from pkg.my_app import my_app
 
