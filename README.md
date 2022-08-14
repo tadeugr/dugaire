@@ -130,15 +130,12 @@ Options:
   --with-kubectl <latest|semantic versioning>
                                   Install kubectl. Examples: --with-
                                   kubectl=latest / --with-kubectl=1.17.0
-  --with-terraform <latest|semantic versioning>
-                                  Install Terraform. Examples: --with-
-                                  terraform=latest / --with-terraform=0.15.5
   --with-velero <latest|semantic versioning>
                                   Install velero. Examples: --with-
                                   velero=latest / --with-velero=1.5.2
   --force                         Ignore Docker cache and build from scratch.
   --dry-run                       Do not build image.
-  --output [image.id|image.id.short|image.name|dockerfile]
+  -o, --output [image.id|image.id.short|image.name|dockerfile]
                                   Command output options.  [default:
                                   image.id.short]
   --help                          Show this message and exit.

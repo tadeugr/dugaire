@@ -2,8 +2,9 @@
 
 import os
 import sys
+import json
 import jinja2
-import re
+import urllib.request
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 APP_ROOT = os.path.join(HERE, "../", "../")
@@ -13,16 +14,21 @@ from pkg.my_apt import my_apt
 
 template_loader = jinja2.FileSystemLoader(searchpath=f"{HERE}/template")
 template_env = jinja2.Environment(loader=template_loader)
-template = template_env.get_template("kubectl.dockerfile.j2")
+template = template_env.get_template("velero.dockerfile.j2")
 
 
 def make_dockerfile(version) -> str:
+
     # Ensure dependencies
-    dockerfile = my_apt.make_dockerfile("curl,ca-certificates")
+    dockerfile = my_apt.make_dockerfile("wget")
 
-    url = '"https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"'
-    if version != "latest":
-        url = f"https://dl.k8s.io/release/v{version}/bin/linux/amd64/kubectl"
+    if version == "latest":
+        response = urllib.request.urlopen(
+            "https://api.github.com/repos/vmware-tanzu/velero/releases/latest"
+        ).read()
+        response = json.loads(response)
+        version = response["tag_name"][1:]
 
-    dockerfile += template.render(url=url)
+    dockerfile += template.render(version=version)
+
     return dockerfile

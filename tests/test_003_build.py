@@ -17,6 +17,7 @@ import common
 
 _BUILT_IMAGES = []
 
+
 def test_build_default_and_remove():
 
     image_id = common.cli("build")
@@ -24,6 +25,7 @@ def test_build_default_and_remove():
 
     result = common.cli(f"rmi {image_id}")
     assert f"Deleted: {image_id}" in result
+
 
 def test_build_default_and_remove_multiple():
 
@@ -36,6 +38,7 @@ def test_build_default_and_remove_multiple():
     result = common.cli(f"rmi {image_id_001} {image_id_002}")
     assert f"Deleted: {image_id_001}" in result
     assert f"Deleted: {image_id_002}" in result
+
 
 def test_build_default_and_remove_all():
 

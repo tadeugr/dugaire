@@ -29,6 +29,7 @@ from pkg.my_docker import my_docker
 from pkg.my_apt import my_apt
 from pkg.my_pip3 import my_pip3
 from pkg.with_kubectl import with_kubectl
+from pkg.with_velero import with_velero
 
 import util
 
@@ -86,13 +87,15 @@ def version():
     help="Install kubectl. Examples: --with-kubectl=latest / --with-kubectl=1.17.0",
     metavar="<latest|semantic versioning>",
     required=False,
-    callback=my_cli.is_version_valid
+    callback=my_cli.is_version_valid,
 )
 @click.option(
     "--with-velero",
+    "with_velero_",
     help="Install velero. Examples: --with-velero=latest / --with-velero=1.5.2",
     metavar="<latest|semantic versioning>",
     required=False,
+    callback=my_cli.is_version_valid,
 )
 @click.option(
     "--force",
@@ -128,7 +131,7 @@ def build(
     apt_,
     pip3_,
     with_kubectl_,
-    with_velero,
+    with_velero_,
     force,
     dry_run,
     output_,
@@ -155,7 +158,7 @@ def build(
 
     dockerfile = ""
 
-    template = util.get_template("base.j2")    
+    template = util.get_template("base.j2")
     dockerfile += template.render(
         from_=from_, label=util.get_dugaire_image_label("dockerfile")
     )
@@ -174,42 +177,12 @@ def build(
     if with_kubectl_:
         dockerfile += with_kubectl.make_dockerfile(with_kubectl_)
 
-    if with_velero:
-
-        current_option_name = "--with-velero"
-        current_option_value = with_velero
-
-        if not util.string_is_latest_or_version(current_option_value):
-            usage_msg = f"{current_option_name}=<latest | semantic versioning>"
-            example_msg = f"{current_option_name}=latest | {current_option_name}=1.5.2"
-
-            exc_msg = f"Bad usage {current_option_name}={current_option_value} \n"
-            exc_msg += f"Valid usage: {usage_msg} \n"
-            exc_msg += f"Examples: {example_msg}"
-            raise click.BadOptionUsage(current_option_name, exc_msg)
-
+    if with_velero_:
+        # Ensure kubectl
         if not with_kubectl_:
-            usage_msg = f"--with-kubectl=<latest | semantic versioning> {current_option_name}=<latest | semantic versioning>"
-            example_msg = f"--with-kubectl=latest {current_option_name}=latest"
+            dockerfile += with_kubectl.make_dockerfile("latest")
 
-            exc_msg = f"Bad usage {current_option_name} requires --with-kubectl \n"
-            exc_msg += f"Valid usage: {usage_msg} \n"
-            exc_msg += f"Examples: {example_msg}"
-            raise click.BadOptionUsage(current_option_name, exc_msg)
-
-        dockerfile += my_apt.make_dockerfile("wget")
-
-        if with_velero == "latest":
-            import urllib.request
-
-            response = urllib.request.urlopen(
-                "https://api.github.com/repos/vmware-tanzu/velero/releases/latest"
-            ).read()
-            response = json.loads(response)
-            with_velero = response["tag_name"][1:]
-
-        template = util.get_template("with_velero.j2")
-        dockerfile += template.render(version=with_velero)
+        dockerfile += with_velero.make_dockerfile(with_velero_)
 
     if output_ == "dockerfile":
         click.echo(dockerfile)
@@ -253,7 +226,9 @@ def build(
 )
 def list_(short):
     client = docker.from_env()
-    images = client.images.list(filters = { "label" : util.get_dugaire_image_label()}, all=True)
+    images = client.images.list(
+        filters={"label": util.get_dugaire_image_label()}, all=True
+    )
 
     if not len(images):
         click.echo("No images built with dugaire found.")
@@ -318,6 +293,7 @@ def rmi(image_):
 
         my_docker.remove_image(img_)
         click.echo(f"Deleted: {img_}")
+
 
 def patch_click() -> None:
     """Fix Click ASCII encoding issue."""

@@ -17,16 +17,9 @@ import common
 
 
 def test_from_ubuntu_20_04_bad_usage():
-    invalid_option = "THIS.IS.INVALID"
-    cmd = f"build --from=ubuntu:20.04 --with-velero={invalid_option}"
+    cmd = f"build --from=ubuntu:20.04 --with-velero=this.is.invalid"
     result = common.cli(cmd)
-    assert f"Bad usage --with-velero={invalid_option}" in result
-
-
-def test_from_ubuntu_20_04_no_kubectl():
-    cmd = f"build --from=ubuntu:20.04 --with-velero=1.5.2"
-    result = common.cli(cmd)
-    assert "Bad usage --with-velero requires --with-kubectl" in result
+    assert f"Invalid value" in result
 
 
 def test_from_ubuntu_20_04_pkg_latest():

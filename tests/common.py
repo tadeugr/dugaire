@@ -15,6 +15,7 @@ sys.path.insert(1, f"{HERE}/../dugaire")
 
 import dugaire
 
+
 def cli(cmd):
     print(f"Running: dugaire {cmd}")
     result = CliRunner().invoke(dugaire.cli, cmd.split(" "))

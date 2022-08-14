@@ -12,7 +12,7 @@ HERE = os.path.dirname(os.path.realpath(__file__))
 
 sys.path.insert(1, f"{HERE}/dugaire")
 
-from pkg.my_app import my_app 
+from pkg.my_app import my_app
 
 # REAME content
 README = open(os.path.join(HERE, "README.md")).read()
