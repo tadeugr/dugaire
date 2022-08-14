@@ -18,6 +18,7 @@ sys.path.insert(0, f"{HERE}")
 
 from pkg.my_app import my_app
 from pkg.my_cli import my_cli
+from pkg.my_util import my_util
 from pkg.my_docker import my_docker
 from pkg.my_apt import my_apt
 from pkg.my_pip3 import my_pip3
