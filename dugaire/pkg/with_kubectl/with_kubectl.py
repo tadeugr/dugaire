@@ -24,9 +24,7 @@ def make_dockerfile(version) -> str:
     dockerfile = apt.make_dockerfile("curl,ca-certificates")
 
     if version == "latest":
-        version = http.get(
-            "https://dl.k8s.io/release/stable.txt"
-        )
+        version = http.get("https://dl.k8s.io/release/stable.txt")
 
         version = version.replace("v", "")
 

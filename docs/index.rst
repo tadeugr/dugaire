@@ -1,47 +1,25 @@
-.. raw:: html
-
-   <!---
-   DO NOT EDIT README.md IT IS AUTO GENARATED
-   -->
-
 Quickly build custom Docker images for local development without having
 to write Dockerfiles.
-
-.. figure:: https://github.com/tadeugr/dugaire/blob/master/docs/assets/tty.gif?raw=true
-   :alt: dugaire
-
-   dugaire
 
 |PyPI| |Python| |Code style: black| |test| |publish| |codecov|
 |Documentation Status| |FOSSA Status|
 
-*Examples*
-
-Install ``vim`` and ``curl`` using ``apt-get``.
+Examples
+========
 
 ::
 
+   # Build image with `vim` and `curl` using `apt-get`
    docker run -it --rm $(dugaire build --apt=vim,curl)
 
-Install ``vim``, ``python3``, ``pip3`` using ``apt-get`` and install
-``ansible`` using ``pip3``.
+   # Build image with `wget`, and `nano` using `apt-get` and install latest `ansible` version using `pip3`.
+   docker run -it --rm $(dugaire build --apt=wget,nano --pip3=ansible)
 
-::
+   # Build image with latest kubectl version
+   docker run -it --rm $(dugaire build --with-kubectl=latest)
 
-   docker run -it --rm $(dugaire build --apt=vim,python3-pip --pip3=ansible)
-
-Install ``kubectl`` binary version ``v1.15.0`` (use
-``--with-kubectl=latest`` to install the latest version).
-
-::
-
-   docker run -it --rm $(dugaire build --apt=vim --with-kubectl=1.15.0)
-
-Do not build the image and just print the Dockerfile:
-
-::
-
-   dugaire build --apt=vim,curl --with-kubectl=latest --output=dockerfile --dry-run
+   # Build image with kubectl 1.15.0
+   docker run -it --rm $(dugaire build --with-kubectl=1.15.0)
 
 Install (on Linux)
 ==================
@@ -199,24 +177,30 @@ Package/Dependency managers
 apt-get
 ~~~~~~~
 
-You can install any package using ``apt``. Use a comma separated (no
-blank space) list of packages you want to install. Example:
-``--apt=wget,iputils-ping``.
+You can install any package using ``apt``.
+
+Use a comma separated (no blank space) list of packages you want to
+install.
+
+Example: ``dugaire build --apt=wget,iputils-ping``
 
 pip3
 ~~~~
 
-You can install any package using ``pip3``. Use a comma separated (no
-blank space) list of packages you want to install. Example:
-``--pip3=jinja2,pyyaml``.
+You can install any package using ``pip3``.
+
+Use a comma separated (no blank space) list of packages you want to
+install.
+
+Use ``<package name>==<version>`` to install specific versions.
+
+Example: ``dugaire build --pip3=jinja2,azure-cli==2.39.0``.
 
 Applications
 ------------
 
 kubectl
 ~~~~~~~
-
-Install kubectl.
 
 Options
 ^^^^^^^
@@ -273,8 +257,6 @@ describes versions included in the automated tests.*
 velero
 ~~~~~~
 
-Install velero.
-
 .. _options-2:
 
 Options
@@ -299,23 +281,6 @@ describes versions included in the automated testsß.*
 
    dugaire build --from=ubuntu:20.04 --with-kubectl=latest --with-velero=latest
    dugaire build --from=ubuntu:20.04 --with-kubectl=1.17.0 --with-velero=1.5.2
-
-Useful Docker commands
-======================
-
-List images created with dugaire
---------------------------------
-
-::
-
-   docker images -f label='builtwith=dugaire'
-
-Delete all images created with dugaire
---------------------------------------
-
-::
-
-   docker rmi -f $(docker images -aq -f label='builtwith=dugaire')
 
 License
 =======
