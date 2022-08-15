@@ -12,6 +12,7 @@ APP_ROOT = os.path.join(HERE, "../", "../")
 sys.path.insert(1, f"{APP_ROOT}")
 
 from pkg.apt import apt
+from pkg.http import http
 
 template_loader = jinja2.FileSystemLoader(searchpath=f"{HERE}/template")
 template_env = jinja2.Environment(loader=template_loader)
@@ -22,9 +23,12 @@ def make_dockerfile(version) -> str:
     # Ensure dependencies
     dockerfile = apt.make_dockerfile("curl,ca-certificates")
 
-    url = '"https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"'
-    if version != "latest":
-        url = f"https://dl.k8s.io/release/v{version}/bin/linux/amd64/kubectl"
+    if version == "latest":
+        version = http.get(
+            "https://dl.k8s.io/release/stable.txt"
+        )
 
-    dockerfile += template.render(url=url)
+        version = version.replace("v", "")
+
+    dockerfile += template.render(version=version)
     return dockerfile
