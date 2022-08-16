@@ -7,18 +7,18 @@ to write Dockerfiles.
 Examples
 ========
 
-::
+.. code:: bash
 
-   # Build image with `vim` and `curl` using `apt-get`
+   # Build an image with vim and curl using apt-get
    docker run -it --rm $(dugaire build --apt=vim,curl)
 
-   # Build image with `wget`, and `nano` using `apt-get` and install latest `ansible` version using `pip3`.
-   docker run -it --rm $(dugaire build --apt=wget,nano --pip3=ansible)
+   # Build an image with wget, and nano using apt-get and install latest azure-cli version using pip3.
+   docker run -it --rm $(dugaire build --apt=wget,nano --pip3=azure-cli)
 
-   # Build image with latest kubectl version
+   # Build an image with latest kubectl version
    docker run -it --rm $(dugaire build --with-kubectl=latest)
 
-   # Build image with kubectl 1.15.0
+   # Build an image with kubectl 1.15.0
    docker run -it --rm $(dugaire build --with-kubectl=1.15.0)
 
 Install (on Linux)
@@ -27,7 +27,7 @@ Install (on Linux)
 Using pip (recommended)
 -----------------------
 
-::
+.. code:: bash
 
    pip install dugaire
 
@@ -36,32 +36,32 @@ From source
 
 Clone this repository.
 
-::
+.. code:: bash
 
    git clone https://github.com/tadeugr/dugaire.git
 
 ``cd`` to its directory.
 
-::
+.. code:: bash
 
    cd dugaire
 
 Install it (requires ``pip``).
 
-::
+.. code:: bash
 
    make install
 
 You should have the command available.
 
-::
+.. code:: bash
 
    dugaire build --help
 
 Usage
 =====
 
-::
+.. code:: bash
 
    Usage: dugaire [OPTIONS] COMMAND [ARGS]...
 
@@ -80,7 +80,7 @@ Usage
 dugaire build
 -------------
 
-::
+.. code:: bash
 
    Usage: dugaire build [OPTIONS]
 
@@ -135,23 +135,23 @@ Enable autocomplete
 
 To enable autocomplete for your current terminal session, run:
 
-::
+.. code:: bash
 
    eval "$(_DUGAIRE_COMPLETE=source dugaire)"
 
-*Follow the instructions bellow to permanently enable autocomplete.*
+Follow the instructions bellow to permanently enable autocomplete.
 
 bash
 ----
 
-::
+.. code:: bash
 
    echo 'eval "$(_DUGAIRE_COMPLETE=source dugaire)"' >> ~/.bashrc
 
 zsh
 ---
 
-::
+.. code:: bash
 
    echo 'eval "$(_DUGAIRE_COMPLETE=source dugaire)"' >> ~/.zshrc
 
@@ -179,22 +179,30 @@ apt-get
 
 You can install any package using ``apt``.
 
-Use a comma separated (no blank space) list of packages you want to
+Use a comma separated list (no blank space) of packages you want to
 install.
 
-Example: ``dugaire build --apt=wget,iputils-ping``
+Example:
+
+.. code:: bash
+
+   dugaire build --apt=wget,iputils-ping
 
 pip3
 ~~~~
 
 You can install any package using ``pip3``.
 
-Use a comma separated (no blank space) list of packages you want to
+Use a comma separated list (no blank space) of packages you want to
 install.
 
 Use ``<package name>==<version>`` to install specific versions.
 
-Example: ``dugaire build --pip3=jinja2,azure-cli==2.39.0``.
+Example:
+
+.. code:: bash
+
+   dugaire build --pip3=jinja2,azure-cli==2.39.0
 
 Applications
 ------------
@@ -215,10 +223,10 @@ See all versions available
 Covered by automated tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-*You may install any version available. The commands bellow only
-describes versions included in the automated tests.*
+   You may install any version available. The commands bellow only
+   describes versions included in the automated tests.
 
-::
+.. code:: bash
 
    dugaire build --from=ubuntu:20.04 --with-kubectl=latest
    dugaire build --from=ubuntu:20.04 --with-kubectl=1.18.0
@@ -246,10 +254,10 @@ See all versions available
 Covered by automated tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-*You may install any version available. The commands bellow only
-describes versions included in the automated tests.*
+   You may install any version available. The commands bellow only
+   describes versions included in the automated tests.
 
-::
+.. code:: bash
 
    dugaire build --from=ubuntu:20.04 --with-terraform=latest
    dugaire build --from=ubuntu:20.04 --with-terraform=0.15.05
@@ -274,10 +282,10 @@ See all versions available
 Covered by automated tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-*You may install any version available. The commands bellow only
-describes versions included in the automated testsß.*
+   You may install any version available. The commands bellow only
+   describes versions included in the automated tests.
 
-::
+.. code:: bash
 
    dugaire build --from=ubuntu:20.04 --with-kubectl=latest --with-velero=latest
    dugaire build --from=ubuntu:20.04 --with-kubectl=1.17.0 --with-velero=1.5.2

@@ -6,7 +6,7 @@ from rich import inspect
 HERE = os.path.dirname(os.path.realpath(__file__))
 
 
-def is_version_valid(ctx, param, value):
+def is_version_valid(ctx=None, param=None, value=None):
     if not value:
         return None
 

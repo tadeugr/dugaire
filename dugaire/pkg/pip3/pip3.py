@@ -9,5 +9,6 @@ template = template_env.get_template("pip3.dockerfile.j2")
 
 
 def make_dockerfile(comma_separated_pkg_list) -> str:
-    dockerfile = template.render(pip3_packages_list=comma_separated_pkg_list)
+    pip3_packages_list = comma_separated_pkg_list.replace(",", " ")
+    dockerfile = template.render(pip3_packages_list=pip3_packages_list)
     return dockerfile
