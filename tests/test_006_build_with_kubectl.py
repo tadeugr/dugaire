@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-""" Import comunity modules. """
+# Import comunity modules.
 
 import os
 import sys
@@ -8,26 +8,35 @@ import docker
 import json
 from click.testing import CliRunner
 
+# Set module import path.
+
 HERE = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(1, f"{HERE}/../dugaire")
 
-""" Import custom modules. """
+# Import custom modules.
 
-import dugaire
-import info
 import common
 
 
 def test_from_ubuntu_20_04_bad_usage():
-    invalid_option = "THIS.IS.INVALID"
-    cmd = f"build --from=ubuntu:20.04 --with-kubectl={invalid_option}"
-    result = common.cli(cmd)
-    assert f"Bad usage --with-kubectl={invalid_option}" in result
+    """
+    Run:
+    dugaire build --from=ubuntu:20.04 --with-kubectl=this.is.invalid
+    """
+
+    cmd = f"build --from=ubuntu:20.04 --with-kubectl=this.is.invalid"
+    result = common.dugaire_cli(cmd)
+    assert f"Invalid value" in result
 
 
 def test_from_ubuntu_20_04_pkg_latest():
+    """
+    Run:
+    dugaire build --from=ubuntu:20.04 --with-kubectl=latest
+    """
+
     cmd = f"build --from=ubuntu:20.04 --with-kubectl=latest"
-    image_id = common.cli(cmd)
+    image_id = common.dugaire_cli(cmd)
     assert len(image_id) == 12
 
     docker_run_output = common.docker_run(
@@ -39,9 +48,14 @@ def test_from_ubuntu_20_04_pkg_latest():
 
 
 def test_from_ubuntu_20_04_pkg_1_18_0():
+    """
+    Run:
+    dugaire build --from=ubuntu:20.04 --with-kubectl=1.18.0
+    """
+
     pkg_version = "1.18.0"
     cmd = f"build --from=ubuntu:20.04 --with-kubectl={pkg_version}"
-    image_id = common.cli(cmd)
+    image_id = common.dugaire_cli(cmd)
     assert len(image_id) == 12
 
     docker_run_output = common.docker_run(
@@ -55,7 +69,7 @@ def test_from_ubuntu_20_04_pkg_1_18_0():
 def test_from_ubuntu_20_04_pkg_1_17_0():
     pkg_version = "1.17.0"
     cmd = f"build --from=ubuntu:20.04 --with-kubectl={pkg_version}"
-    image_id = common.cli(cmd)
+    image_id = common.dugaire_cli(cmd)
     assert len(image_id) == 12
 
     docker_run_output = common.docker_run(
@@ -69,7 +83,7 @@ def test_from_ubuntu_20_04_pkg_1_17_0():
 def test_from_ubuntu_20_04_pkg_1_16_0():
     pkg_version = "1.16.0"
     cmd = f"build --from=ubuntu:18.04 --with-kubectl={pkg_version}"
-    image_id = common.cli(cmd)
+    image_id = common.dugaire_cli(cmd)
     assert len(image_id) == 12
 
     docker_run_output = common.docker_run(
@@ -83,7 +97,7 @@ def test_from_ubuntu_20_04_pkg_1_16_0():
 def test_from_ubuntu_20_04_pkg_1_15_0():
     pkg_version = "1.15.0"
     cmd = f"build --from=ubuntu:18.04 --with-kubectl={pkg_version}"
-    image_id = common.cli(cmd)
+    image_id = common.dugaire_cli(cmd)
     assert len(image_id) == 12
 
     docker_run_output = common.docker_run(

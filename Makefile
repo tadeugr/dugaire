@@ -1,24 +1,30 @@
 requirements:
 	pip install -r requirements.txt
 
+requirements-dev:
+	pip install -r requirements-dev.txt
+
 install:
 	make requirements
 	pip install . --force
 
 install-dev:
 	make requirements
+	make requirements-dev
 	pip install --editable . --force
 
 test:
-	pytest
+	pytest --disable-pytest-warnings
 
-setup:
+dist:
+	rm -fr *.egg-info dist || true
 	python setup.py sdist bdist_wheel
+.PHONY: dist
 
-binary:
-	#pyinstaller --onefile --name=dugaire dugaire.py
-	cd dugaire
-	pyinstaller --clean -y --name=dugaire --add-data="templates\base.j2;templates" dugaire.py
+# binary:
+# 	#pyinstaller --onefile --name=dugaire dugaire.py
+# 	cd dugaire
+# 	pyinstaller --clean -y --name=dugaire --add-data="templates\base.j2;templates" dugaire.py
 
 readme:
 	python3 docs/make_readme.py > README.md

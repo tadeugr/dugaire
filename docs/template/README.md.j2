@@ -62,73 +62,13 @@ dugaire build --help
 # Usage
 
 ```bash
-Usage: dugaire [OPTIONS] COMMAND [ARGS]...
-
-  CLI tool to build and manage custom Docker images.
-
-Options:
-  --version  Show the version and exit.
-  --help     Show this message and exit.
-
-Commands:
-  build    Build Docker images with custom packages.
-  list     List images built with dugaire.
-  rmi      Remove images built with dugaire.
-  version  Show the version and exit.
-
+{{usage_help}}
 ```
 
 ## dugaire build
 
 ```bash
-Usage: dugaire build [OPTIONS]
-
-  Build Docker images with custom packages.
-
-  Examples:
-
-  Build an image and install vim and curl using apt-get.
-
-  $ dugaire build --apt=vim,curl
-
-  Build an image and install python3 using apt-get and ansible using pip3.
-
-  $ dugaire build --apt=python3-pip --pip3=ansible
-
-  Build an image and install the latest version of kubectl.
-
-  $ dugaire build --with-kubectl=latest
-
-Options:
-  --from <name:tag>               Base image (used in Dockerfile FROM).
-                                  Example: --from=ubuntu:20.04  [default:
-                                  ubuntu:20.04; required]
-  --name <name:tag>               Image name. Example: --name="myimage:0.0.1"
-                                  [default: random]
-  --apt <pkg01|pkg01,pkg02>       Comma separeted list of packages (no blank
-                                  space) to install using apt-get install.
-                                  Requires a base image with apt-get. Example:
-                                  -apt=curl,vim
-  --pip3 <pkg01|pkg01,pkg02>      Comma separeted list of packages (no blank
-                                  space) to install using pip3 install.
-                                  WARNING: requires -apt=python3-pip. Example:
-                                  -apt=python3-pip -pip3=ansible,jinja2
-  --with-kubectl <latest|semantic versioning>
-                                  Install kubectl. Examples: --with-
-                                  kubectl=latest / --with-kubectl=1.17.0
-  --with-terraform <latest|semantic versioning>
-                                  Install terrafom. Examples: --with-
-                                  terraform=latest / --with-terraform=0.15.5
-  --with-velero <latest|semantic versioning>
-                                  Install velero. Examples: --with-
-                                  velero=latest / --with-velero=1.5.2
-  --force                         Ignore Docker cache and build from scratch.
-  --dry-run                       Do not build image.
-  -o, --output [image.id|image.id.short|image.name|dockerfile]
-                                  Command output options.  [default:
-                                  image.id.short]
-  --help                          Show this message and exit.
-
+{{usage_build_help}}
 ```
 
 # Enable autocomplete 

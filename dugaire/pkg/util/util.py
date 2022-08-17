@@ -1,11 +1,11 @@
-#!/usr/bin/env python3
-
-""" Import comunity modules. """
+# Import comunity modules.
 
 import os
 import sys
 import jinja2
 import re
+
+# Set module import path.
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, f"{HERE}")
@@ -21,8 +21,20 @@ def string_is_latest_or_version(check_string):
     return True
 
 
+def is_valid_version(version):
+    """Check version format is valid."""
+
+    prog = re.compile("^(\d+\.)?(\d+\.)?(\*|\d+)$")
+    match_semantic_version = prog.match(version)
+
+    if version != "latest" and not match_semantic_version:
+        return False
+
+    return True
+
+
 def get_template(file_name, searchpath=f"{HERE}/templates"):
-    """ Load and return a Jinja template file. """
+    """Load and return a Jinja template file."""
 
     templateLoader = jinja2.FileSystemLoader(searchpath=searchpath)
     templateEnv = jinja2.Environment(loader=templateLoader)
@@ -31,7 +43,7 @@ def get_template(file_name, searchpath=f"{HERE}/templates"):
 
 
 def get_dugaire_image_label(return_format="string"):
-    """ Get the default label used when building images. """
+    """Get the default label used when building images."""
 
     default_label_key = "builtwith"
     default_label_value = "dugaire"

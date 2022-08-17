@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-""" Import comunity modules. """
+# Import comunity modules.
 
 import os
 import sys
@@ -8,32 +8,35 @@ import docker
 import json
 from click.testing import CliRunner
 
+# Set module import path.
+
 HERE = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(1, f"{HERE}/../dugaire")
 
-""" Import custom modules. """
+# Import custom modules.
 
-import dugaire
-import info
 import common
 
 
 def test_from_ubuntu_20_04_bad_usage():
-    invalid_option = "THIS.IS.INVALID"
-    cmd = f"build --from=ubuntu:20.04 --with-velero={invalid_option}"
-    result = common.cli(cmd)
-    assert f"Bad usage --with-velero={invalid_option}" in result
+    """
+    Run:
+    dugaire build --from=ubuntu:20.04 --with-velero=this.is.invalid
+    """
 
-
-def test_from_ubuntu_20_04_no_kubectl():
-    cmd = f"build --from=ubuntu:20.04 --with-velero=1.5.2"
-    result = common.cli(cmd)
-    assert "Bad usage --with-velero requires --with-kubectl" in result
+    cmd = f"build --from=ubuntu:20.04 --with-velero=this.is.invalid"
+    result = common.dugaire_cli(cmd)
+    assert f"Invalid value" in result
 
 
 def test_from_ubuntu_20_04_pkg_latest():
+    """
+    Run:
+    dugaire build --from=ubuntu:20.04 --with-kubectl=latest --with-velero=latest
+    """
+
     cmd = f"build --from=ubuntu:20.04 --with-kubectl=latest --with-velero=latest"
-    image_id = common.cli(cmd)
+    image_id = common.dugaire_cli(cmd)
     assert len(image_id) == 12
 
     docker_run_output = common.docker_run(
@@ -49,10 +52,15 @@ def test_from_ubuntu_20_04_pkg_latest():
 
 
 def test_from_ubuntu_20_04_pkg_version():
+    """
+    Run:
+    dugaire build --from=ubuntu:20.04 --with-kubectl=1.17.0 --with-velero=1.5.2
+    """
+
     kubectl_version = "1.17.0"
     velero_version = "1.5.2"
     cmd = f"build --from=ubuntu:20.04 --with-kubectl={kubectl_version} --with-velero={velero_version}"
-    image_id = common.cli(cmd)
+    image_id = common.dugaire_cli(cmd)
     assert len(image_id) == 12
 
     docker_run_output = common.docker_run(

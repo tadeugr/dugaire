@@ -1,43 +1,57 @@
 #!/usr/bin/env python3
 
-""" Import comunity modules. """
+# Import comunity modules.
 
 import os
+from platform import platform
 import sys
-import docker
+import docker as docker_py
 import click
-import jinja2
-import json
 import uuid
-import re
 import click_completion
-import urllib.request
 from io import BytesIO
+
+# Set module import path.
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, f"{HERE}")
 
-""" Import custom modules. """
+# Import custom modules.
 
-import info
-import util
+from pkg.app import app
+from pkg.cli import cli
+from pkg.util import util
+from pkg.docker import docker
+from pkg.apt import apt
+from pkg.pip3 import pip3
+from pkg.with_kubectl import with_kubectl
+from pkg.with_terraform import with_terraform
+from pkg.with_velero import with_velero
 
 
 @click.group()
-@click.version_option(info.get_version(), prog_name=info.get_prog_name())
-def cli():
-    """ CLI tool to build and manage custom Docker images. """
+@click.version_option(app.get_version(), message="%(version)s")
+def cli_():
+    """CLI tool to build and manage custom Docker images."""
+
     pass
 
 
-@cli.command()
+@cli_.command()
+def version():
+    """Show the version and exit."""
+
+    click.echo(app.get_version())
+
+
+@cli_.command()
 @click.option(
     "--from",
     "from_",
     help="Base image (used in Dockerfile FROM). Example: --from=ubuntu:20.04",
     metavar="<name:tag>",
     required=True,
-    default="ubuntu:18.04",
+    default="ubuntu:20.04",
     show_default=True,
     type=str,
 )
@@ -51,35 +65,41 @@ def cli():
 )
 @click.option(
     "--apt",
+    "apt_",
     help="Comma separeted list of packages (no blank space) to install using apt-get install. Requires a base image with apt-get. Example: -apt=curl,vim",
     metavar="<pkg01|pkg01,pkg02>",
     required=False,
 )
 @click.option(
     "--pip3",
+    "pip3_",
     help="Comma separeted list of packages (no blank space) to install using pip3 install. WARNING: requires -apt=python3-pip. Example: -apt=python3-pip -pip3=ansible,jinja2",
     metavar="<pkg01|pkg01,pkg02>",
     required=False,
 )
 @click.option(
-    "--with-azurecli",
-    "--with-az",
-    help='Install Azure CLI. Examples: --with-azurecli=latest / For older versions, use pip3: --apt=python3-pip --pip="azure-cli==2.2.0"',
-    metavar="<latest>",
-    required=False,
-    type=click.Choice(["latest"], case_sensitive=False),
-)
-@click.option(
     "--with-kubectl",
+    "with_kubectl_",
     help="Install kubectl. Examples: --with-kubectl=latest / --with-kubectl=1.17.0",
     metavar="<latest|semantic versioning>",
     required=False,
+    callback=cli.is_version_valid,
+)
+@click.option(
+    "--with-terraform",
+    "with_terraform_",
+    help="Install terrafom. Examples: --with-terraform=latest / --with-terraform=0.15.5",
+    metavar="<latest|semantic versioning>",
+    required=False,
+    callback=cli.is_version_valid,
 )
 @click.option(
     "--with-velero",
+    "with_velero_",
     help="Install velero. Examples: --with-velero=latest / --with-velero=1.5.2",
     metavar="<latest|semantic versioning>",
     required=False,
+    callback=cli.is_version_valid,
 )
 @click.option(
     "--force",
@@ -99,6 +119,8 @@ def cli():
 )
 @click.option(
     "--output",
+    "-o",
+    "output_",
     help="Command output options.",
     required=False,
     default="image.id.short",
@@ -110,14 +132,14 @@ def cli():
 def build(
     from_,
     name,
-    apt,
-    pip3,
-    with_azurecli,
-    with_kubectl,
-    with_velero,
+    apt_,
+    pip3_,
+    with_kubectl_,
+    with_terraform_,
+    with_velero_,
     force,
     dry_run,
-    output,
+    output_,
 ):
     """
     Build Docker images with custom packages.
@@ -141,123 +163,54 @@ def build(
 
     dockerfile = ""
 
-    template = util.get_template("base.j2")
-    dockerfile += template.render(
-        from_=from_, label=util.get_dugaire_image_label("dockerfile")
-    )
+    # Dockerfile: base image
+    dockerfile += docker.make_dockerfile(from_)
 
-    if apt:
-        packages = apt.replace(",", " ")
-        template = util.get_template("apt.j2")
-        dockerfile += template.render(packages=packages)
+    # Dockerfile: install packages using apt-get
+    if apt_:
+        dockerfile += apt.make_dockerfile(apt_)
 
-    if pip3:
-        dependency_list = {}
-        dependency_list["azure-cli"] = ["gcc", "python3-dev"]
+    # Dockerfile: install packages using pip3
+    if pip3_:
+        # Ensure install python3-pip
+        apt_python3_pip = "python3-pip"
+        if not apt_ or apt_python3_pip not in apt_:
+            dockerfile += apt.make_dockerfile(apt_python3_pip)
 
-        pip3_install = pip3.split(",")
-        for package in pip3_install:
-            package_name = package.split("==")[0]
-            if package_name in dependency_list:
-                dependency = " ".join(dependency_list[package_name])
-                apt_template = util.get_template("apt.j2")
-                dockerfile += apt_template.render(packages=dependency)
+        dockerfile += pip3.make_dockerfile(pip3_)
 
-        packages = " ".join(pip3_install)
-        template = util.get_template("pip3.j2")
-        dockerfile += template.render(packages=packages)
+    # Dockerfile: install kubectl
+    if with_kubectl_:
+        dockerfile += with_kubectl.make_dockerfile(with_kubectl_)
 
-    if with_kubectl:
-        current_option_name = "--with-kubectl"
-        current_option_value = with_kubectl
+    # Dockerfile: install terraform
+    if with_terraform_:
+        dockerfile += with_terraform.make_dockerfile(with_terraform_)
 
-        if not util.string_is_latest_or_version(current_option_value):
-            usage_msg = f"{current_option_name}=<latest | semantic versioning>"
-            example_msg = f"{current_option_name}=latest | {current_option_name}=1.17.0"
+    # Dockerfile: install velero
+    if with_velero_:
+        # Ensure kubectl
+        if not with_kubectl_:
+            dockerfile += with_kubectl.make_dockerfile("latest")
 
-            exc_msg = f"Bad usage {current_option_name}={current_option_value} \n"
-            exc_msg += f"Valid usage: {usage_msg} \n"
-            exc_msg += f"Examples: {example_msg}"
-            raise click.BadOptionUsage(current_option_name, exc_msg)
+        dockerfile += with_velero.make_dockerfile(with_velero_)
 
-        dependency_list = {}
-        dependency_list = ["curl", "ca-certificates"]
-        dependency = " ".join(dependency_list)
-
-        apt_template = util.get_template("apt.j2")
-        dockerfile += apt_template.render(packages=dependency)
-
-        url = "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-        if with_kubectl != "latest":
-            url = f"https://storage.googleapis.com/kubernetes-release/release/v{with_kubectl}/bin/linux/amd64/kubectl"
-
-        template = util.get_template("with_kubectl.j2")
-        dockerfile += template.render(url=url)
-
-    if with_azurecli:
-        dependency_list = {}
-        dependency_list = ["curl", "ca-certificates"]
-        dependency = " ".join(dependency_list)
-
-        apt_template = util.get_template("apt.j2")
-        dockerfile += apt_template.render(packages=dependency)
-
-        template = util.get_template("with_azurecli.j2")
-        dockerfile += template.render()
-
-    if with_velero:
-
-        current_option_name = "--with-velero"
-        current_option_value = with_velero
-
-        if not util.string_is_latest_or_version(current_option_value):
-            usage_msg = f"{current_option_name}=<latest | semantic versioning>"
-            example_msg = f"{current_option_name}=latest | {current_option_name}=1.5.2"
-
-            exc_msg = f"Bad usage {current_option_name}={current_option_value} \n"
-            exc_msg += f"Valid usage: {usage_msg} \n"
-            exc_msg += f"Examples: {example_msg}"
-            raise click.BadOptionUsage(current_option_name, exc_msg)
-
-        if not with_kubectl:
-            usage_msg = f"--with-kubectl=<latest | semantic versioning> {current_option_name}=<latest | semantic versioning>"
-            example_msg = f"--with-kubectl=latest {current_option_name}=latest"
-
-            exc_msg = f"Bad usage {current_option_name} requires --with-kubectl \n"
-            exc_msg += f"Valid usage: {usage_msg} \n"
-            exc_msg += f"Examples: {example_msg}"
-            raise click.BadOptionUsage(current_option_name, exc_msg)
-
-        dependency_list = {}
-        dependency_list = ["wget"]
-        dependency = " ".join(dependency_list)
-
-        apt_template = util.get_template("apt.j2")
-        dockerfile += apt_template.render(packages=dependency)
-
-        if with_velero == "latest":
-            import urllib.request
-
-            response = urllib.request.urlopen(
-                "https://api.github.com/repos/vmware-tanzu/velero/releases/latest"
-            ).read()
-            response = json.loads(response)
-            with_velero = response["tag_name"][1:]
-
-        template = util.get_template("with_velero.j2")
-        dockerfile += template.render(version=with_velero)
+    # Print dockerfile
+    if output_ == "dockerfile":
+        click.echo(dockerfile)
 
     image_id = None
     image_name = None
     if not dry_run:
         f = BytesIO(dockerfile.encode("utf-8"))
-        client = docker.from_env()
+        client = docker_py.from_env()
         image_name = name
         if image_name == "random":
             random_name = str(uuid.uuid4())[:8]
             random_tag = str(uuid.uuid4())[:8]
             image_name = f"dug-{random_name}:{random_tag}"
 
+        # --platform linux/amd64
         image, error = client.images.build(
             fileobj=f, tag=image_name, nocache=force, rm=True, forcerm=True
         )
@@ -265,17 +218,15 @@ def build(
         image_id = image.attrs["Id"]
         image_name = image.attrs["RepoTags"][0]
 
-    if output == "image.id":
+    if output_ == "image.id":
         click.echo(image_id)
-    if output == "image.id.short":
+    if output_ == "image.id.short":
         click.echo(image_id.replace("sha256:", "")[:12])
-    if output == "image.name":
+    if output_ == "image.name":
         click.echo(image_name)
-    if output == "dockerfile":
-        click.echo(dockerfile)
 
 
-@cli.command("list", help="List images built with dugaire.")
+@cli_.command("list", help="List images built with dugaire.")
 @click.option(
     "--short/--not-short",
     "-s",
@@ -286,8 +237,20 @@ def build(
     is_flag=True,
 )
 def list_(short):
-    client = docker.from_env()
-    images = client.images.list(filters={"label": [util.get_dugaire_image_label()]})
+    """
+    List images built with dugaire.
+    \n
+    Examples:
+    \n
+    dugaire list
+    \n
+    dugaire list --no-short
+    """
+
+    client = docker_py.from_env()
+    images = client.images.list(
+        filters={"label": util.get_dugaire_image_label()}, all=True
+    )
 
     if not len(images):
         click.echo("No images built with dugaire found.")
@@ -305,48 +268,60 @@ def list_(short):
     click.echo(f"-----------")
 
 
-@cli.command(help="Remove images built with dugaire.")
-@click.option(
-    "--image",
-    help="Comma separated list of Image IDs.",
+@cli_.command()
+@click.argument(
+    "image_",
     required=True,
-    metavar="<Image ID|all>",
+    nargs=-1,
+    metavar="image",
 )
-def remove(image):
-    client = docker.from_env()
+def rmi(image_):
+    """
+    Remove images built with dugaire.
+    \n
+    Examples:
+    \n
+    Remove all images.
+    \n
+    $ dugaire rmi all
+    \n
+    Remove an image by image ID.
+    \n
+    $ dugaire rmi 205f13fdada0
+    \n
+    Remove multiple images by image ID.
+    \n
+    $ dugaire rmi 205f13fdada0 758581506147
+    \n
 
-    if image == "all":
-        images = client.images.list(filters={"label": [util.get_dugaire_image_label()]})
-        for docker_image in images:
-            client.images.remove(image=docker_image.id, force=True)
+    """
 
-        click.echo("Images removed.")
-        sys.exit(0)
+    images_built_with_dugaire = docker.list_images()
+    if len(images_built_with_dugaire) == 0:
+        click.echo("No images built with dugaire found.")
+        exit(0)
 
-    client.images.remove(image=image, force=True)
-    click.echo("Image removed.")
+    if "all" in image_:
+        image_ = images_built_with_dugaire
 
+    # Iterate image ID arguments
+    for img_ in image_:
+        if img_ not in images_built_with_dugaire.keys() and img_ != "all":
+            click.echo(f"{img_} was not built with dugaire. Skipping...")
+            continue
 
-def patch_click() -> None:
-    """Fix Click ASCII encoding issue."""
-    try:
-        from click import core
-        from click import _unicodefun  # type: ignore
-    except ModuleNotFoundError:
-        return
-
-    for module in (core, _unicodefun):
-        if hasattr(module, "_verify_python3_env"):
-            module._verify_python3_env = lambda: None
+        docker.remove_image(img_)
+        click.echo(f"Deleted: {img_}")
 
 
 def main():
     """Main function executed by the CLI command."""
-    patch_click()
+
     click_completion.init()
-    cli()
+    cli_()
 
 
 if __name__ == "__main__":
     """Call the main function."""
+
     main()
