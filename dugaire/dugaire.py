@@ -51,7 +51,7 @@ def version():
     help="Base image (used in Dockerfile FROM). Example: --from=ubuntu:20.04",
     metavar="<name:tag>",
     required=True,
-    default="ubuntu:18.04",
+    default="ubuntu:20.04",
     show_default=True,
     type=str,
 )

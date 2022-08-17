@@ -33,7 +33,12 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
     ],
-    packages=find_packages(exclude=("tests",)),
+    packages=find_packages(
+        exclude=[
+            "tests",
+            "docs",
+        ]
+    ),
     include_package_data=True,
     install_requires=[REQUIREMENTS],
     entry_points={"console_scripts": ["dugaire=dugaire.dugaire:main"]},

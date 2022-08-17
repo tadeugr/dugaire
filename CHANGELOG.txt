@@ -1,0 +1,7 @@
+- Remove --with-azurecli option
+
+- Drop Python 3.6 support
+
+- Automatically add --apt=python3-pip when --pip3=<blah> is used
+
+- Add --with-terraform

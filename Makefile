@@ -16,13 +16,15 @@ install-dev:
 test:
 	pytest --disable-pytest-warnings
 
-setup:
+dist:
+	rm -fr *.egg-info dist || true
 	python setup.py sdist bdist_wheel
+.PHONY: dist
 
-binary:
-	#pyinstaller --onefile --name=dugaire dugaire.py
-	cd dugaire
-	pyinstaller --clean -y --name=dugaire --add-data="templates\base.j2;templates" dugaire.py
+# binary:
+# 	#pyinstaller --onefile --name=dugaire dugaire.py
+# 	cd dugaire
+# 	pyinstaller --clean -y --name=dugaire --add-data="templates\base.j2;templates" dugaire.py
 
 readme:
 	python3 docs/make_readme.py > README.md

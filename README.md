@@ -102,7 +102,7 @@ Usage: dugaire build [OPTIONS]
 Options:
   --from <name:tag>               Base image (used in Dockerfile FROM).
                                   Example: --from=ubuntu:20.04  [default:
-                                  ubuntu:18.04; required]
+                                  ubuntu:20.04; required]
   --name <name:tag>               Image name. Example: --name="myimage:0.0.1"
                                   [default: random]
   --apt <pkg01|pkg01,pkg02>       Comma separeted list of packages (no blank
@@ -161,15 +161,13 @@ Tested with:
 
 - `ubuntu:20.04`
 
-- `ubuntu:18.04`
-
 > You may use base images that were built from the tested images.
 
 ## Package/Dependency managers
 
 ### apt-get
 
-You can install any package using `apt`.
+You can install any package using `apt`
 
 Use a comma separated list (no blank space) of packages you want to install. 
 
@@ -181,7 +179,7 @@ dugaire build --apt=wget,iputils-ping
 
 ### pip3
 
-You can install any package using `pip3`.
+You can install any package using `pip3`
 
 Use a comma separated list (no blank space) of packages you want to install. 
 
