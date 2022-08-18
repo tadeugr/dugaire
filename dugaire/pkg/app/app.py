@@ -2,7 +2,7 @@
 
 
 def get_version():
-    return "0.0.14"
+    return "0.0.15"
 
 
 def get_prog_name():
