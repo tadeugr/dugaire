@@ -1,7 +1,3 @@
-- Remove --with-azurecli option
+- Fix Github Actions pipeline to run deploy after tests pass.
 
-- Drop Python 3.6 support
-
-- Automatically add --apt=python3-pip when --pip3=<blah> is used
-
-- Add --with-terraform
+- No new features.
